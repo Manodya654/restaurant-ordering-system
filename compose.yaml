@@ -1,0 +1,22 @@
+services:
+  frontend:
+    image: nginx:latest
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    ports:
+      - "81:80"
+    working_dir: /usr/share/nginx/html
+
+  backend:
+    image: node:22.9.0
+    volumes:
+      - ./backend:/usr/src/app
+    ports:
+    - "82:9000"
+    working_dir: /usr/src/app
+    command: sh -c "
+      chmod +x run.sh &&
+      ./run.sh"
+
+
+    
