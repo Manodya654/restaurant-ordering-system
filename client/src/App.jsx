@@ -35,24 +35,19 @@
 // }
 
 
-// client/src/App.jsx
-
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import AdminDashboard from './pages/AdminDashboard.jsx'; // Import the component
-import Menu from './pages/Menu.jsx'; // Assuming your menu page is here
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import AdminDashboard from './pages/AdminDashboard.jsx'; 
+import Menu from './pages/Menu.jsx'; 
 
 function App() {
   return (
     <BrowserRouter>
-      {/* You can add a simple navigation bar here for testing.
-        In a real app, you would hide the Admin link from public users.
-      */}
-
+      {/* Removed the unnecessary <Link> comments/placeholders */}
       <Routes>
         {/* Public Route (Your existing menu page) */}
         <Route path="/" element={<Menu />} /> 
         
-        {/* Admin Route (Your new page) */}
+        {/* Admin Route (Using a dedicated path for the Admin dashboard) */}
         <Route path="/admin" element={<AdminDashboard />} />
         
         {/* Add more routes here (e.g., /history, /signup) */}

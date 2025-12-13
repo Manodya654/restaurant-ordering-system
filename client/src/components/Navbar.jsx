@@ -13,7 +13,7 @@ export default function Navbar() {
       
       {/* 2. Increased horizontal padding (px-6 and lg:px-24) 
           and centered the content container (mx-auto max-w-7xl) for larger space. */}
-      <div className="flex justify-between items-center py-6 px-5 lg:px-18 mx-auto max-w-7xl">
+      <div className="flex justify-between items-center py-6 px-6 lg:px-18 mx-auto max-w-7xl">
         
         {/* 1. Left Group: Logo */}
         <h1 className="logo text-xl font-celtic min-w-48">Flavor Town</h1> 

@@ -49,17 +49,36 @@ app.post('/api/items', async (req, res) => {
 });
 
 // 3. UPDATE ITEM
+// app.put('/api/items/:id', async (req, res) => {
+//   try {
+//     const updatedItem = await Item.findByIdAndUpdate(
+//       req.params.id, 
+//       req.body, 
+//       { new: true } // Return the updated document
+//     );
+//     res.json(updatedItem);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// });
 app.put('/api/items/:id', async (req, res) => {
-  try {
-    const updatedItem = await Item.findByIdAndUpdate(
-      req.params.id, 
-      req.body, 
-      { new: true } // Return the updated document
-    );
-    res.json(updatedItem);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+    try {
+      // req.body contains ALL fields sent from the frontend: 
+      // name, description, price, category, image, isPopular, AND status.
+      const updatedItem = await Item.findByIdAndUpdate(
+        req.params.id, 
+        req.body, // This sends all fields, including status
+        { new: true, runValidators: true } // {new: true} returns the updated document
+      );
+      
+      if (!updatedItem) {
+          return res.status(404).json({ message: 'Item not found' });
+      }
+
+      res.json(updatedItem);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
 });
 
 // 4. DELETE ITEM
