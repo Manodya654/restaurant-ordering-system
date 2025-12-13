@@ -58,7 +58,7 @@ export default function Hero() {
         <div className="absolute inset-0 bg-black opacity-60"></div>
         
         {/* Content (relative z-index to stay above the image/overlay) */}
-        <div className="relative z-10 p-6 flex flex-col justify-center h-full">
+        <div className="relative z-10 p-6 flex flex-col justify-center h-80%">
           <h3 className="text-xl font-bold mb-3">FLASH DEAL 🔥</h3>
           <p className="text-sm">
             Buy Spicy Fries with Combo – 30% off
