@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from "../components/Navbar"; // Renamed from Header in my prior example
+import Navbar from "../components/Navbar"; 
 import Hero from "../components/Hero";
 import Categories from "../components/Categories";
 import MenuGrid from "../components/MenuGrid";
@@ -22,7 +22,7 @@ export default function Menu() {
             }
             
             const data = await response.json();
-            setMenuItems(data); // Update the state with the real data
+            setMenuItems(data); 
         } catch (e) {
             console.error("Could not fetch menu items:", e);
             setError("Failed to load menu. Please check the server connection.");
@@ -47,12 +47,14 @@ export default function Menu() {
 
 
     // --- Conditional Rendering for Loading and Error States ---
+    // (Ensure these also use the max-width container if they replace the main view)
     if (loading) {
-        // You might want to use a spinner component here
         return (
-            <div>
+            <div className="min-h-screen flex flex-col">
                 <Navbar />
-                <div className="text-center py-20 text-xl text-gray-600">Loading delicious items...</div>
+                <div className="flex-grow max-w-7xl mx-auto w-full px-6 py-20 text-center text-xl text-gray-600">
+                    Loading delicious items...
+                </div>
                 <Footer />
             </div>
         );
@@ -60,9 +62,9 @@ export default function Menu() {
 
     if (error) {
         return (
-            <div>
+            <div className="min-h-screen flex flex-col">
                 <Navbar />
-                <div className="text-center py-20 text-xl text-red-600">
+                <div className="flex-grow max-w-7xl mx-auto w-full px-6 py-20 text-center text-xl text-red-600">
                     {error}
                 </div>
                 <Footer />
@@ -72,19 +74,28 @@ export default function Menu() {
 
     // --- Main Render Section ---
     return (
-        <div>
+        <div className="min-h-screen flex flex-col">
             <Navbar />
+            
+            {/* The Hero component likely contains the banner shown in the image. 
+                If the content is still cut off vertically, you may need to adjust the 
+                height or padding INSIDE the Hero component itself. */}
             <Hero />
-            
-            {/* Pass the filtering function and currently selected category */}
-            <Categories 
-                onCategoryChange={handleCategoryChange} 
-                activeCategory={selectedCategory} 
-                menuItems={menuItems} // Pass items to calculate counts (optional)
-            />
-            
-            {/* Pass the filtered data to the MenuGrid for display */}
-            <MenuGrid items={filteredItems} /> 
+
+            {/* --- New Wrapper for horizontal padding and center alignment --- */}
+            {/* Added max-w-7xl for width limit, mx-auto for center, and px-6 for padding */}
+            <div className="flex-grow max-w-7xl mx-auto w-full px-4 py-10">
+                
+                {/* Pass the filtering function and currently selected category */}
+                <Categories 
+                    onCategoryChange={handleCategoryChange} 
+                    activeCategory={selectedCategory} 
+                    menuItems={menuItems} 
+                />
+                
+                {/* Pass the filtered data to the MenuGrid for display */}
+                <MenuGrid items={filteredItems} /> 
+            </div>
             
             <Footer />
         </div>
