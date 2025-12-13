@@ -1,0 +1,23 @@
+# Use a minimal Node.js image
+FROM node:20-alpine
+
+# Set the working directory
+WORKDIR /app/server
+
+# Copy package.json and package-lock.json
+# Note: Ensure these files are directly in your server/ directory
+COPY server/package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the source code
+COPY server/ .
+
+# Expose the server port (e.g., 3000, 5000, or whatever your server uses)
+EXPOSE 3000
+
+# Command to run the server
+CMD ["npm", "start"]
+# OR if you use index.js:
+# CMD ["node", "index.js"]
