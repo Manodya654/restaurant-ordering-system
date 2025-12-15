@@ -8,6 +8,24 @@ const Item = require('./models/item');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// CORRECT SETUP for /api prefix
+const categoryRoutes = require('./routes/categoryRoutes'); // or similar
+app.use('/api/categories', categoryRoutes);
+
+// server/index.js (or server/server.js)
+
+// ... existing imports ...
+const userRoutes = require('./routes/userRoutes'); 
+// const categoryRoutes = require('./routes/categoryRoutes'); // Assuming you have this
+
+// ... existing middleware ...
+
+// Route registration
+app.use('/api/users', userRoutes); 
+// app.use('/api/categories', categoryRoutes); // Keep this if you use the /api prefix
+
+// ... existing error handler ...
+
 // Middleware
 app.use(cors()); // Allows your frontend to talk to this server
 app.use(express.json()); // Parses JSON bodies

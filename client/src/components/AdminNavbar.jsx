@@ -16,7 +16,8 @@ import { FaBowlFood } from 'react-icons/fa6';
 const navItems = [
     { name: 'Dashboard', icon: <FaHome className="mr-2" />, href: '/admin/dashboard', active: false },
     { name: 'Orders', icon: <FaClipboardList className="mr-2" />, href: '/admin/orders', active: false },
-    { name: 'Menu', icon: <BiRestaurant className="mr-2" />, href: '/pages/AdminDashboard', active: true }, // Current active page
+    { name: 'Categories', icon: <FaBowlFood className="mr-2" />, href: '/admin/categories', active: false }, 
+    { name: 'Menu', icon: <BiRestaurant className="mr-2" />, href: '/admin/menu', active: true }, 
     { name: 'Customers', icon: <FaUsers className="mr-2" />, href: '/admin/customers', active: false },
     { name: 'Settings', icon: <FaCog className="mr-2" />, href: '/admin/settings', active: false },
 ];

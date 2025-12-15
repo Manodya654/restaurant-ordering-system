@@ -34,26 +34,38 @@
 //   )
 // }
 
-
+// // client/src/App.jsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import AdminDashboard from './pages/AdminDashboard.jsx'; 
+import AdminDashboard from './pages/Admin/AdminMenu.jsx'; 
 import Menu from './pages/Menu.jsx'; 
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
+import { AuthProvider } from './context/AuthContext.jsx';
+import AdminCategories from './pages/Admin/AdminCategories.jsx';
+import AdminLogin from './pages/Admin/AdminLogin.jsx';
 
 function App() {
-  return (
-    <BrowserRouter>
-      {/* Removed the unnecessary <Link> comments/placeholders */}
-      <Routes>
-        {/* Public Route (Your existing menu page) */}
-        <Route path="/" element={<Menu />} /> 
-        
-        {/* Admin Route (Using a dedicated path for the Admin dashboard) */}
-        <Route path="/admin" element={<AdminDashboard />} />
-        
-        {/* Add more routes here (e.g., /history, /signup) */}
-      </Routes>
-    </BrowserRouter>
-  );
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Menu />} /> 
+            <Route path="/menu" element={<Menu />} /> 
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            
+            
+            {/* Admin Route */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/menu" element={<AdminDashboard />} />
+            <Route path="/admin/categories" element={<AdminCategories />} />
+
+            
+          </Routes>
+        </BrowserRouter>
+    </AuthProvider>
+  );
 }
 
 export default App;

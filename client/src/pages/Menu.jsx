@@ -10,7 +10,7 @@ export default function Menu() {
     const [menuItems, setMenuItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedCategory, setSelectedCategory] = useState('All'); // State for filtering
+    const [selectedCategory, setSelectedCategory] = useState('All'); 
 
     // 2. Function to fetch data from the backend
     const fetchMenuItems = async () => {
@@ -23,6 +23,9 @@ export default function Menu() {
             
             const data = await response.json();
             setMenuItems(data); 
+            
+            // Debugging: Log the categories found in the database to the console
+            console.log("Loaded items:", data);
         } catch (e) {
             console.error("Could not fetch menu items:", e);
             setError("Failed to load menu. Please check the server connection.");
@@ -36,21 +39,26 @@ export default function Menu() {
         fetchMenuItems();
     }, []);
 
-    // 4. Filtering Logic
+    // 4. Filtering Logic (Improved)
     const handleCategoryChange = (category) => {
         setSelectedCategory(category);
     };
 
-    const filteredItems = selectedCategory === 'All'
-        ? menuItems
-        : menuItems.filter(item => item.category === selectedCategory);
+    // Robust filtering: Converts everything to lowercase before comparing
+    const filteredItems = menuItems.filter(item => {
+        if (selectedCategory === 'All') return true;
 
+        // Safety check: ensure item.category exists
+        if (!item.category) return false;
+
+        // Compare lowercase versions to avoid "Burger" vs "burger" issues
+        return item.category.toLowerCase().trim() === selectedCategory.toLowerCase().trim();
+    });
 
     // --- Conditional Rendering for Loading and Error States ---
-    // (Ensure these also use the max-width container if they replace the main view)
     if (loading) {
         return (
-            <div className="min-h-screen flex flex-col">
+            <div className="min-h-screen flex flex-col pt-28"> 
                 <Navbar />
                 <div className="flex-grow max-w-7xl mx-auto w-full px-6 py-20 text-center text-xl text-gray-600">
                     Loading delicious items...
@@ -62,7 +70,7 @@ export default function Menu() {
 
     if (error) {
         return (
-            <div className="min-h-screen flex flex-col">
+            <div className="min-h-screen flex flex-col pt-28"> 
                 <Navbar />
                 <div className="flex-grow max-w-7xl mx-auto w-full px-6 py-20 text-center text-xl text-red-600">
                     {error}
@@ -74,27 +82,35 @@ export default function Menu() {
 
     // --- Main Render Section ---
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col"> 
             <Navbar />
             
-            {/* The Hero component likely contains the banner shown in the image. 
-                If the content is still cut off vertically, you may need to adjust the 
-                height or padding INSIDE the Hero component itself. */}
-            <Hero />
+            {/* Kept pt-28 to ensure Navbar doesn't cover content */}
+            <div className="flex-grow pt-20"> 
+                
+                <div className="mb-1"> 
+                    <Hero />
+                </div>
 
-            {/* --- New Wrapper for horizontal padding and center alignment --- */}
-            {/* Added max-w-7xl for width limit, mx-auto for center, and px-6 for padding */}
-            <div className="flex-grow max-w-7xl mx-auto w-full px-4 py-10">
-                
-                {/* Pass the filtering function and currently selected category */}
-                <Categories 
-                    onCategoryChange={handleCategoryChange} 
-                    activeCategory={selectedCategory} 
-                    menuItems={menuItems} 
-                />
-                
-                {/* Pass the filtered data to the MenuGrid for display */}
-                <MenuGrid items={filteredItems} /> 
+                <div className="max-w-7xl mx-auto w-full py-6">
+                    
+                    {/* Pass the filtering function and current state */}
+                    <Categories 
+                        onCategoryChange={handleCategoryChange} 
+                        activeCategory={selectedCategory} 
+                        menuItems={menuItems} 
+                    />
+                    
+                    {/* Display the filtered results */}
+                    <MenuGrid items={filteredItems} /> 
+                    
+                    {/* Helpful message if filter returns nothing */}
+                    {filteredItems.length === 0 && (
+                        <div className="text-center text-gray-500 mt-10">
+                            No items found in the "{selectedCategory}" category.
+                        </div>
+                    )}
+                </div>
             </div>
             
             <Footer />

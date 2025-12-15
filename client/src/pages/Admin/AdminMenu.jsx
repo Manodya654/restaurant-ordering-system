@@ -1,6 +1,6 @@
-// client/src/pages/AdminDashboard.jsx
+// client/src/pages/AdminMenu.jsx
 import { useState, useEffect } from 'react';
-import AdminNavbar from '../components/AdminNavbar';
+import AdminNavbar from '../../components/AdminNavbar';
 import { FaSearch, FaRegEdit, FaRegTrashAlt, FaPlus, FaTable, FaTimes } from 'react-icons/fa';
 
 // --- Helper Functions ---
@@ -37,7 +37,7 @@ const getStatusPill = (status) => {
     }
 };
 
-const AdminDashboard = () => {
+const AdminMenu = () => {
     const [items, setItems] = useState([]);
     const [formData, setFormData] = useState({
         name: '', description: '', price: '', category: 'Mains', image: '', status: 'Available', isPopular: false
@@ -411,4 +411,4 @@ const AdminDashboard = () => {
     );
 };
 
-export default AdminDashboard;
+export default AdminMenu;
