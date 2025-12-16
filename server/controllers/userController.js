@@ -11,9 +11,7 @@ const generateToken = (user) => {
   );
 };
 
-// =======================
-// REGISTER (Customer) - optional
-// =======================
+//customer login
 export const registerUser = async (req, res) => {
   try {
     const { name, email, phoneNumber, password, confirmPassword } = req.body;
@@ -57,9 +55,7 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// =======================
-// LOGIN (Admin & Customer)
-// =======================
+// login admin & customer
 export const loginUser = async (req, res) => {
   try {
     let { email, password } = req.body;

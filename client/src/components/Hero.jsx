@@ -1,4 +1,3 @@
-// client/src/components/Hero.jsx (Final attempt at spacing)
 import heroImage from "../assets/hero.jpg"; 
 import offerImage from "../assets/offer.jpg"; 
 
@@ -8,29 +7,22 @@ export default function Hero() {
     const flashDealImage = `url(${offerImage})`;
 
     return (
-        // FIX: Replaced 'mt-6' with 'pt-8' (32px padding-top) to guarantee separation 
-        // from the element directly above it (likely the Navbar/body edge).
-        // Removed the unnecessary 'mb-10' as it can be placed in Menu.jsx for better control.
         <section className="max-w-7xl mx-auto w-full px-6 pt-8">
             
             <div className="grid md:grid-cols-3 gap-6">
                 
-                {/* 1. Main Banner (Orange with Burger/Kitchen Image) */}
                 <div 
                     className="md:col-span-2 text-white rounded-2xl relative overflow-hidden"
                     style={{ height: '20rem' }} 
                 >
                     
-                    {/* Background Image Container */}
                     <div 
                         className="absolute inset-0 bg-cover bg-center"
                         style={{ backgroundImage: mainBannerImage }}
                     ></div>
                     
-                    {/* Opacity Overlay (Orange with 75% opacity) */}
                     <div className="absolute inset-0 bg-orange-600 opacity-75"></div> 
                     
-                    {/* Content */}
                     <div className="relative z-10 p-8 py-10 flex flex-col justify-center h-full"> 
                         <h2 className="text-4xl font-extrabold mb-4">
                             Hungry? We're firing up the grill.
@@ -44,22 +36,18 @@ export default function Hero() {
                     </div>
                 </div>
 
-                {/* 2. Side Deal (Black with Fries/Combo Image) */}
                 <div 
                     className="bg-black text-white rounded-2xl relative overflow-hidden"
                     style={{ height: '20rem' }} 
                 >
                     
-                    {/* Background Image Container */}
                     <div 
                         className="absolute inset-0 bg-cover bg-center"
-                        style={{ backgroundImage: flashDealImage }}
-                    ></div>
+                        style={{ backgroundImage: flashDealImage }}>
+                    </div>
                     
-                    {/* Opacity Overlay (Black with 60% opacity) */}
                     <div className="absolute inset-0 bg-black opacity-60"></div>
                     
-                    {/* Content */}
                     <div className="relative z-10 p-6 flex flex-col justify-center h-full">
                         <h3 className="text-xl font-bold mb-3">FLASH DEAL 🔥</h3>
                         <p className="text-sm">

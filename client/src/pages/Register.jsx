@@ -1,8 +1,6 @@
-// client/src/pages/Register.jsx
 import { Link, useNavigate } from "react-router-dom"; 
-import { Lock, Mail, User, Phone } from "lucide-react"; // Import Phone icon
+import { Lock, Mail, User, Phone } from "lucide-react"; 
 import { useState, useContext } from "react"; 
-// import { AuthContext } from "../context/AuthContext"; 
 import Navbar from "../components/Navbar"; 
 import Footer from "../components/Footer";
 
@@ -10,20 +8,18 @@ export default function Register() {
     
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [phoneNumber, setPhoneNumber] = useState(""); // NEW State for Phone Number
+    const [phoneNumber, setPhoneNumber] = useState(""); 
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState(''); 
     const [isLoading, setIsLoading] = useState(false);
     
     const navigate = useNavigate();
-    // const { login } = useContext(AuthContext); 
 
     
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage('');
 
-        // 1. Client-side validation: Check all required fields
         if (!name || !email || !phoneNumber || !password) {
             setMessage("Please fill in all required fields.");
             return;
@@ -34,13 +30,13 @@ export default function Register() {
         const registerData = {
             name,
             email,
-            phoneNumber, // Include in payload
+            phoneNumber,
             password,
         };
 
         try {
             
-            // 2. API Call to the backend 
+            // API Call to the backend 
             const response = await fetch('http://localhost:3000/users/register', { 
                 method: 'POST',
                 headers: {
@@ -51,9 +47,8 @@ export default function Register() {
 
             const data = await response.json();
             
-            // 3. Handle response
             if (response.ok) { 
-                setMessage("✅ Registration successful! You can now log in.");
+                setMessage(" Registration successful! You can now log in.");
                 
                 setTimeout(() => {
                     navigate('/login'); 
@@ -61,11 +56,11 @@ export default function Register() {
 
             } else {
                 
-                setMessage(`❌ Registration failed: ${data.message || 'An error occurred during sign up.'}`);
+                setMessage(`Registration failed: ${data.message || 'An error occurred during sign up.'}`);
             }
         } catch (error) {
             console.error('Network Error:', error);
-            setMessage("❌ Network error: Could not connect to the server (Is the backend running?).");
+            setMessage(" Network error: Could not connect to the server (Is the backend running?).");
         } finally {
             setIsLoading(false);
         }
@@ -77,7 +72,6 @@ export default function Register() {
             
             <div className="flex-grow flex justify-center items-center pt-28 pb-20"> 
                 
-                {/* Registration Form Card: Changed max-w-sm to max-w-md */}
                 <div className="bg-white w-full max-w-md rounded-xl shadow-2xl p-8 transform transition-all duration-300 hover:shadow-3xl">
                     <h2 className="text-3xl font-extrabold text-center mb-1 text-gray-800">
                         Create Account
@@ -94,7 +88,6 @@ export default function Register() {
 
                     <form className="space-y-6" onSubmit={handleSubmit}> 
                         
-                        {/* Name Field */}
                         <div className="relative">
                             <label className="text-sm font-medium text-gray-600 mb-1 block">Your Name</label>
                             <User
@@ -111,7 +104,6 @@ export default function Register() {
                             />
                         </div>
                         
-                        {/* Email Field */}
                         <div className="relative">
                             <label className="text-sm font-medium text-gray-600 mb-1 block">Email Address</label>
                             <Mail
@@ -128,7 +120,6 @@ export default function Register() {
                             />
                         </div>
                         
-                        {/* NEW: Phone Number Field */}
                         <div className="relative">
                             <label className="text-sm font-medium text-gray-600 mb-1 block">Phone Number</label>
                             <Phone
@@ -145,7 +136,6 @@ export default function Register() {
                             />
                         </div>
 
-                        {/* Password Field */}
                         <div className="relative">
                             <label className="text-sm font-medium text-gray-600 mb-1 block">Password</label>
                             <Lock
@@ -162,7 +152,6 @@ export default function Register() {
                             />
                         </div>
 
-                        {/* Submit Button */}
                         <button
                             type="submit"
                             className={`w-full text-white py-3 rounded-lg text-lg font-bold transition shadow-md hover:shadow-lg transform active:scale-95 duration-150
@@ -173,7 +162,6 @@ export default function Register() {
                         </button>
                     </form>
 
-                    {/* Login Link */}
                     <p className="text-sm text-center text-gray-500 mt-6">
                         Already have an account?{" "}
                         <Link to="/login" className="text-orange-600 font-bold hover:text-orange-700 transition">

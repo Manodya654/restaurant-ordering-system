@@ -93,8 +93,7 @@ export default function Menu() {
                         activeCategory={selectedCategory} 
                         menuItems={menuItems} 
                     />
-                    
-                    {/* Display the filtered results */}
+            
                     <MenuGrid items={filteredItems} /> 
                     
                     {filteredItems.length === 0 && (

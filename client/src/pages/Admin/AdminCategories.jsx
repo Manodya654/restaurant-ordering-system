@@ -1,19 +1,15 @@
-import { useState, useEffect } from 'react'; // Removed useContext for now
+import { useState, useEffect } from 'react'; 
 import AdminNavbar from '../../components/AdminNavbar';
 import { FaPlus, FaRegTrashAlt, FaRegEdit } from 'react-icons/fa';
-import * as categoryService from '../../services/categoryService'; 
-// Note: Ensure the path '../../services/categoryService' matches your folder structure
+import * as categoryService from '../../services/categoryService';
 
 const AdminCategories = () => {
-    // const { user } = useContext(AuthContext); // Commented out user context extraction
     
     const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({ name: '', image: '' });
-    const [isEditing, setIsEditing] = useState(null); // Stores ID of category being edited
+    const [isEditing, setIsEditing] = useState(null); 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
-    // --- API & CRUD Functions ---
 
     useEffect(() => {
         fetchCategories();
@@ -51,27 +47,18 @@ const AdminCategories = () => {
             return;
         }
 
-        // --- AUTH CHECK REMOVED FOR TESTING ---
-        // if (!user || user.role !== 'admin') {
-        //     alert('Access denied. Only administrators can modify categories.');
-        //     return;
-        // }
-
         try {
             if (isEditing) {
-                // UPDATE OPERATION
-                // Calling the update function from categoryService
                 await categoryService.updateCategory(isEditing, formData); 
                 alert('Category Updated Successfully!');
             } else {
-                // CREATE OPERATION
-                // Token is handled inside the service file (Dummy Token)
+                // Token is handled inside the service file (as a Dummy Token)
                 await categoryService.createCategory(formData); 
                 alert('Category Added Successfully!');
             }
             
-            fetchCategories(); // Refresh list
-            resetForm(); // Clear form
+            fetchCategories(); 
+            resetForm(); 
             
         } catch (err) {
             console.error(err);
@@ -82,16 +69,11 @@ const AdminCategories = () => {
     const handleDelete = async (id) => {
         if(!window.confirm("WARNING: Deleting a category may affect menu items. Are you sure?")) return;
         
-        // --- AUTH CHECK REMOVED FOR TESTING ---
-        // if (!user || user.role !== 'admin') { ... }
-
         try {
             await categoryService.deleteCategory(id);
-            // Optimistically update UI
             setCategories(categories.filter(cat => cat._id !== id));
             alert('Category deleted.');
             
-            // If we deleted the item currently being edited, reset the form
             if (isEditing === id) {
                 resetForm();
             }
@@ -107,7 +89,6 @@ const AdminCategories = () => {
             image: category.image,
         });
         setIsEditing(category._id);
-        // Scroll to the form
         document.getElementById('quick-add-section')?.scrollIntoView({ behavior: 'smooth' });
     };
 
@@ -120,7 +101,6 @@ const AdminCategories = () => {
                 <main className="flex-1 overflow-x-hidden overflow-y-auto p-10">
                     <div className="max-w-4xl mx-auto"> 
                         
-                        {/* Title and Add New Button */}
                         <div className="flex justify-between items-end mb-6">
                             <div>
                                 <h2 className="text-3xl font-semibold text-gray-800 mb-2">Category Management</h2>
@@ -137,12 +117,10 @@ const AdminCategories = () => {
                             </button>
                         </div>
 
-                        {/* Category List Section */}
                         <div className="bg-white p-6 rounded-xl shadow-lg mb-8">
                             
                             {error && <div className="text-red-600 p-4 bg-red-50 border border-red-200 rounded-lg mb-4">{error}</div>}
 
-                            {/* Categories Table */}
                             <div className="overflow-x-auto">
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead className="bg-gray-50">
@@ -186,7 +164,6 @@ const AdminCategories = () => {
                             </div>
                         </div>
 
-                        {/* Quick Add/Edit Section */}
                         <div id="quick-add-section" className="p-6 bg-white rounded-xl shadow-lg">
                             <h3 className="text-xl font-semibold text-gray-800 mb-2">{isEditing ? 'Edit Category' : 'Add New Category'}</h3>
                             <p className="text-gray-500 mb-6">{isEditing ? `Editing: ${formData.name}` : 'Enter details for a new category.'}</p>

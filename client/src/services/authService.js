@@ -1,4 +1,3 @@
-// client/src/services/authService.js
 const API_URL = "http://localhost:5000/api/users";
 
 export const login = async (email, password) => {

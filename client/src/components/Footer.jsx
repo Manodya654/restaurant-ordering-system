@@ -2,14 +2,10 @@ import { FaMapMarkerAlt, FaPhone, FaEnvelope } from 'react-icons/fa';
 
 export default function Footer() {
   return (
-    // Outer footer container, matching the dark design from the image
     <footer className="bg-gray-100 text-white pt-12 pb-4 text-sm">
       
-      {/* Main Content Grid (Four Columns) */}
-      {/* Use a maximum width container for better centering on large screens */}
       <div className="mx-auto max-w-7xl px-8 grid grid-cols-2 md:grid-cols-4 gap-12 border-b border-gray-700 pb-10">
-        
-        {/* 1. Brand Info Column */}
+      
         <div className="col-span-2 md:col-span-1">
           <h3 className="logo text-sm font-celtic mb-3 py-2">Flavor Town</h3>
           <p className="text-gray-600 text-sm max-w-xs leading-relaxed">
@@ -17,7 +13,6 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* 2. Quick Links Column */}
         <div>
           <h4 className="font-bold mb-4 text-black uppercase tracking-wider">Quick Links</h4>
           <ul className="space-y-2 text-gray-600">
@@ -26,8 +21,7 @@ export default function Footer() {
             <li><a href="#" className="hover:text-orange-500 transition">Order History</a></li>
           </ul>
         </div>
-
-        {/* 3. Categories Column */}
+    
         <div>
           <h4 className="font-bold mb-4 text-black uppercase tracking-wider">Categories</h4>
           <ul className="space-y-2 text-gray-600">
@@ -37,21 +31,20 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* 4. Contact Us Column */}
         <div>
           <h4 className="font-bold mb-4 text-black uppercase tracking-wider">Contact Us</h4>
           <ul className="space-y-4 text-gray-600">
-            {/* Address */}
+            
             <li className="flex items-start gap-3">
               <FaMapMarkerAlt className="mt-1 flex-shrink-0 w-4 h-4 text-orange-500" />
               <span>12/ A, Royal street, Colombo.</span>
             </li>
-            {/* Phone */}
+           
             <li className="flex items-center gap-3">
               <FaPhone className="flex-shrink-0 w-4 h-4 text-orange-500" />
               <span>+ 1 5468498710</span>
             </li>
-            {/* Email */}
+         
             <li className="flex items-center gap-3">
               <FaEnvelope className="flex-shrink-0 w-4 h-4 text-orange-500" />
               <span>hello@flavorstown.com</span>
@@ -60,12 +53,10 @@ export default function Footer() {
         </div>
       </div>
       
-      {/* Bottom Copyright and Policy Links Bar */}
       <div className="mx-auto max-w-7xl px-8 mt-4 pt-4 flex flex-col md:flex-row justify-between items-center text-gray-500 text-xs">
-        {/* Copyright */}
+      
         <p>© 2025 FlavorTown. All rights reserved.</p>
 
-        {/* Policy Links */}
         <div className="flex gap-4 mt-2 md:mt-0">
           <a href="#" className="hover:text-white transition">Privacy Policy</a>
           <a href="#" className="hover:text-white transition">Terms of Service</a>

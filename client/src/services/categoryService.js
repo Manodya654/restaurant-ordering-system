@@ -7,7 +7,7 @@ const getConfig = (token) => ({
     },
 });
 
-// GET: Fetch all categories (Public)
+// GET all categories 
 export const getCategories = async () => {
     const response = await fetch(API_URL);
     if (!response.ok) {
@@ -16,35 +16,28 @@ export const getCategories = async () => {
     return response.json();
 };
 
-// POST: Create a new category (Admin)
-// client/src/services/categoryService.js (Focus on createCategory)
-
+// POST a new category 
 export const createCategory = async (categoryData) => {
     // ... fetch setup ...
     const response = await fetch(API_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            // Ensure you are passing the Authorization token if needed
         },
         body: JSON.stringify(categoryData),
     });
-
-    // CRITICAL: Check the response status BEFORE parsing JSON
     if (!response.ok) {
-        // If the server responded with 400 or 500, we throw a descriptive error
         const errorData = await response.json(); 
         throw new Error(errorData.message || `Failed to create category with status ${response.status}`);
     }
 
-    // Only return the data if the status was 2xx
     return await response.json();
 };
 
-// PUT: Update an existing category (Admin) 
+// Update existing category 
 export const updateCategory = async (categoryId, categoryData, token) => {
     const response = await fetch(`${API_URL}/${categoryId}`, {
-        method: 'PUT', // Updated method to PUT
+        method: 'PUT', 
         ...getConfig(token),
         body: JSON.stringify(categoryData),
     });
@@ -56,7 +49,7 @@ export const updateCategory = async (categoryId, categoryData, token) => {
     return response.json();
 };
 
-// DELETE: Delete a category (Admin)
+// Delete a category 
 export const deleteCategory = async (categoryId, token) => {
     const response = await fetch(`${API_URL}/${categoryId}`, {
         method: 'DELETE',
@@ -67,6 +60,5 @@ export const deleteCategory = async (categoryId, token) => {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to delete category');
     }
-    // Expected to return a JSON message on success
     return response.json();
 };

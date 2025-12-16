@@ -40,7 +40,6 @@ mongoose
  
 
 
-// // server/index.js (FINAL CORRECT ORDER)
 // require('dotenv').config();
 // const express = require('express');
 // const mongoose = require('mongoose');
@@ -50,13 +49,9 @@ mongoose
 // const app = express();
 // const PORT = process.env.PORT || 5000;
 
-// // ------------------------------------------------------------------
-// // CRITICAL FIX: Global Middleware MUST BE FIRST (Lines 16 and 17 in your file)
-// app.use(cors()); // Line 1
-// app.use(express.json()); // Line 2
-// // ------------------------------------------------------------------
+// app.use(cors()); 
+// app.use(express.json()); 
 
-// // ROUTE IMPORTS (Order doesn't matter here)
 // const categories = require('./routes/categories');
 // const users = require('./routes/users'); 
 
@@ -64,16 +59,13 @@ mongoose
 // app.use('/api/categories', categories);
 // app.use('/api/users', users);  
 
-// // ... Database Connection ...
-
 // // Database Connection
 // mongoose.connect(process.env.MONGO_URI)
-//   .then(() => console.log('✅ MongoDB Connected'))
-//   .catch(err => console.error('❌ MongoDB Connection Error:', err));
+//   .then(() => console.log(' MongoDB Connected'))
+//   .catch(err => console.error(' MongoDB Connection Error:', err));
 
 // // --- ROUTES ---
 
-// // 1. GET ALL ITEMS
 // // app.get('/api/items', async (req, res) => {
 // //   try {
 // //     const items = await Item.find();
@@ -83,7 +75,6 @@ mongoose
 // //   }
 // // });
 
-// // // 2. CREATE ITEM
 // // app.post('/api/items', async (req, res) => {
 // //   const item = new Item({
 // //     name: req.body.name,
@@ -102,13 +93,12 @@ mongoose
 // //   }
 // // });
 
-// // // 3. UPDATE ITEM
 // // // app.put('/api/items/:id', async (req, res) => {
 // // //   try {
 // // //     const updatedItem = await Item.findByIdAndUpdate(
 // // //       req.params.id, 
 // // //       req.body, 
-// // //       { new: true } // Return the updated document
+// // //       { new: true } 
 // // //     );
 // // //     res.json(updatedItem);
 // // //   } catch (error) {
@@ -117,12 +107,10 @@ mongoose
 // // // });
 // // app.put('/api/items/:id', async (req, res) => {
 // //     try {
-// //       // req.body contains ALL fields sent from the frontend: 
-// //       // name, description, price, category, image, isPopular, AND status.
 // //       const updatedItem = await Item.findByIdAndUpdate(
 // //         req.params.id, 
-// //         req.body, // This sends all fields, including status
-// //         { new: true, runValidators: true } // {new: true} returns the updated document
+// //         req.body, 
+// //         { new: true, runValidators: true } 
 // //       );
       
 // //       if (!updatedItem) {
@@ -135,7 +123,6 @@ mongoose
 // //     }
 // // });
 
-// // // 4. DELETE ITEM
 // // app.delete('/api/items/:id', async (req, res) => {
 // //   try {
 // //     await Item.findByIdAndDelete(req.params.id);
@@ -146,7 +133,7 @@ mongoose
 // // });
 
 
-// // ADD A DUMMY ROUTE
+// // Adding a dummy route
 // app.get('/', (req, res) => res.send('Server is running!'));
 
 // // Start Server

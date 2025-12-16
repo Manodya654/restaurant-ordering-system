@@ -1,7 +1,5 @@
 import axios from 'axios';
-
-// Base URL of your backend API
-const API_URL = 'http://localhost:5000/api/menu'; // change port/path if needed
+const API_URL = 'http://localhost:5000/api/menu'; 
 
 // Get all menu items
 export const getMenus = async () => {
@@ -14,7 +12,7 @@ export const getMenus = async () => {
   }
 };
 
-// Get a single menu item by ID
+// Get a menu item by ID
 export const getMenuById = async (id) => {
   try {
     const response = await axios.get(`${API_URL}/${id}`);

@@ -1,6 +1,5 @@
 import Item from "../models/item.js";
 
-// @ Fetch all menu items
 export const getItems = async (req, res) => {
   try {
     const keyword = req.query.keyword
@@ -63,8 +62,7 @@ export const updateItem = async (req, res) => {
   }
 };
 
-// @desc Delete a menu item
-// @route DELETE /api/menu/:id
+// delete a menu item
 export const deleteItem = async (req, res) => {
   const { id } = req.params;
 

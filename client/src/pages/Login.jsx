@@ -1,8 +1,6 @@
-// client/src/pages/Login.jsx (Polished UI)
 import { Link, useNavigate } from "react-router-dom"; 
 import { Lock, Mail } from "lucide-react"; 
 import { useState, useContext } from "react"; 
-// import { AuthContext } from "../context/AuthContext"; // Keeping this commented out as requested
 import Navbar from "../components/Navbar"; 
 import Footer from "../components/Footer";
 import { AuthProvider } from "../context/AuthContext";
@@ -13,16 +11,13 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(''); 
   const [isLoading, setIsLoading] = useState(false);
-  
-//   const navigate = useNavigate();
-//   const { login } = useContext(AuthContext);
 
   
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
 
-    // 1. Client-side validation
+// customer validation
     if (!email || !password) {
         setMessage("Please enter both email and password.");
         return;
@@ -37,7 +32,6 @@ export default function Login() {
 
     try {
       
-      // 2. API Call to the backend (Using port 3000 as defined in your code)
       const response = await fetch('http://localhost:3000/users/login', { 
         method: 'POST',
         headers: {
@@ -48,37 +42,33 @@ export default function Login() {
 
       const data = await response.json();
       
-      // 3. Handle response
       if (response.ok) { 
-        setMessage("✅ Login successful! Redirecting...");
+        setMessage("Login successful! Redirecting...");
         
-        // login(data.token); // Re-enable when AuthContext is ready
+        // login(data.token); // This should re enable when AuthContext is ready
         
         setTimeout(() => {
-            navigate('/menu'); // Redirect to the main menu page
+            navigate('/menu'); 
         }, 1500); 
 
       } else {
         
-        setMessage(`❌ Login failed: ${data.message || 'Invalid email or password.'}`);
+        setMessage(`Login failed: ${data.message || 'Invalid email or password.'}`);
       }
     } catch (error) {
       console.error('Network Error:', error);
-      setMessage("❌ Network error: Could not connect to the server (Is the backend running?).");
+      setMessage("Network error: Could not connect to the server (Is the backend running?).");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    // Outer container for Navbar and Footer setup
     <div className="min-h-screen flex flex-col">
         <Navbar />
         
-        {/* Main Content Area: flex-grow and pt-28 to clear fixed Navbar */}
         <div className="flex-grow flex justify-center items-center pt-28 pb-20"> 
             
-            {/* Login Form Card */}
             <div className="bg-white w-full max-w-sm rounded-xl shadow-2xl p-8 transform transition-all duration-300 hover:shadow-3xl">
                 <h2 className="text-3xl font-extrabold text-center mb-1 text-gray-800">
                     Welcome Back
@@ -87,7 +77,6 @@ export default function Login() {
                     Sign in to your account to continue
                 </p>
                 
-                {/* Message Display */}
                 {message && (
                     <div className={`p-3 mb-4 rounded-lg text-sm font-medium ${message.startsWith('❌') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
                         {message}
@@ -95,8 +84,7 @@ export default function Login() {
                 )}
 
                 <form className="space-y-6" onSubmit={handleSubmit}> 
-                    
-                    {/* Email Field - Styled to match design */}
+                
                     <div className="relative">
                         <label className="text-sm font-medium text-gray-600 mb-1 block">Email Address</label>
                         <Mail
@@ -113,7 +101,6 @@ export default function Login() {
                         />
                     </div>
 
-                    {/* Password Field - Styled to match design */}
                     <div className="relative">
                         <label className="text-sm font-medium text-gray-600 mb-1 block">Password</label>
                         <Lock
@@ -130,7 +117,6 @@ export default function Login() {
                         />
                     </div>
 
-                    {/* Submit Button */}
                     <button
                         type="submit"
                         className={`w-full text-white py-3 rounded-lg text-lg font-semibold transition shadow-md hover:shadow-lg transform active:scale-95 duration-150
@@ -141,7 +127,6 @@ export default function Login() {
                     </button>
                 </form>
 
-                {/* Register Link */}
                 <p className="text-sm text-center text-gray-500 mt-6">
                     Don't have an account?{" "}
                     <Link to="/register" className="text-orange-600 font-bold hover:text-orange-700 transition">

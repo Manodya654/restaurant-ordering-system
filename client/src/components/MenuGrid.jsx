@@ -1,6 +1,3 @@
-// import { FaPlus, FaStar } from "react-icons/fa" // Import FaStar for the "Popular" tag
-
-// // ... (Imports and items array remain the same)
 // import burger from "../assets/burger.jpg"
 // import pizza from "../assets/pizza.jpg"
 // import vegan from "../assets/vegan.jpg"
@@ -8,39 +5,37 @@
 // import asian from "../assets/asian.jpg"
 
 // const items = [
-//     // I've updated the prices to reflect the $xx.xx format seen in the image
-//     // You can revert this if LKR is required for your final app.
 //     {
 //       name: "Classic Beef Burger",
-//       description: "Juicy beef patty with lettuce, tomato, onions, pickles, and our special sauce", // Added description for the card body
-//       price: "$12.99", // Updated price format
+//       description: "Juicy beef patty with lettuce, tomato, onions, pickles, and our special sauce", 
+//       price: "$12.99", 
 //       img: burger,
 //       category: "Burgers",
-//       isPopular: true, // Added a flag for the "Popular" tag
+//       isPopular: true, 
 //     },
 //     {
 //       name: "Margherita Pizza",
-//       description: "Fresh mozzarella, tomato sauce, and basil on our homemade dough", // Added description
-//       price: "$14.99", // Updated price format
+//       description: "Fresh mozzarella, tomato sauce, and basil on our homemade dough", 
+//       price: "$14.99", 
 //       img: pizza,
 //       category: "Pizza",
-//       isPopular: true, // Added a flag
+//       isPopular: true, 
 //     },
 //     {
 //       name: "Creamy Carbonara",
-//       description: "Traditional Italian pasta with eggs, cheese, pancetta, and black pepper", // Added description
-//       price: "$16.99", // Updated price format
+//       description: "Traditional Italian pasta with eggs, cheese, pancetta, and black pepper", 
+//       price: "$16.99", 
 //       img: vegan,
 //       category: "Non-Vegan",
-//       isPopular: true, // Added a flag
+//       isPopular: true, 
 //     },
 //     {
 //       name: "Chocolate Lava Cake",
-//       description: "Rich chocolate cake with a molten chocolate center, served with vanilla ice...", // Added description
-//       price: "$7.99", // Updated price format
+//       description: "Rich chocolate cake with a molten chocolate center, served with vanilla ice...", 
+//       price: "$7.99", 
 //       img: cake,
 //       category: "Desserts",
-//       isPopular: true, // Added a flag
+//       isPopular: true, 
 //     },
 //     {
 //       name: "Fresh Juice",
@@ -79,10 +74,8 @@
 //       {filteredItems.map((item, index) => (
 //         <div
 //           key={index}
-//           // Card Styling: White background, rounded corners, slight shadow, and hover effect
 //           className="bg-white text-gray-800 rounded-xl shadow-lg overflow-hidden transition duration-300 hover:ring-2 hover:ring-orange-500 cursor-pointer relative" 
 //         >
-//             {/* POPULAR TAG */}
 //             {item.isPopular && (
 //                 <div className="absolute top-4 right-4 bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1 shadow-md">
 //                     <FaStar className="w-3 h-3 text-white"/>
@@ -90,7 +83,6 @@
 //                 </div>
 //             )}
             
-//             {/* Image Container */}
 //             <div className="h-40 w-full overflow-hidden rounded-t-xl">
 //                 <img
 //                     src={item.img}
@@ -101,18 +93,14 @@
 //             </div>
 
 //             <div className="p-4 flex flex-col justify-between">
-//                 {/* Title and Description */}
 //                 <div>
 //                     <h3 className="font-bold text-base">{item.name}</h3>
 //                     <p className="text-gray-500 text-xs mt-1 leading-normal mb-3">{item.description}</p>
 //                 </div>
 
-//                 {/* Price and Button (Bottom Row) */}
 //                 <div className="flex justify-between items-center mt-2">
-//                     {/* Price */}
 //                     <p className="text-orange-600 font-bold text-lg">{item.price}</p> 
 
-//                     {/* Button: Small, round, orange button with FaPlus */}
 //                     <button
 //                         onClick={() => addToCart(item)}
 //                         // bg-orange-500, rounded-full, fixed size (w-8 h-8), center content
@@ -128,15 +116,14 @@
 //   )
 // }
 
-// client/src/components/MenuGrid.jsx
+
 
 import { FaPlus, FaStar } from "react-icons/fa";
 
-// The `items` prop is the list of items already filtered by the parent Menu.jsx component.
 export default function MenuGrid({ items }) {
 
     const addToCart = (item) => {
-        // You would implement your cart logic here (e.g., context or redux)
+
         alert(`${item.name} (LKR ${item.price}) added to cart!`);
     };
 
@@ -155,11 +142,9 @@ export default function MenuGrid({ items }) {
         <section className="px-8 mt-8 grid sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {items.map((item) => (
                 <div
-                    // The key MUST be the unique MongoDB ID
                     key={item._id} 
                     className="bg-white text-gray-800 rounded-xl shadow-lg overflow-hidden transition duration-300 hover:ring-2 hover:ring-orange-500 cursor-pointer relative" 
                 >
-                    {/* POPULAR TAG (Uses item.isPopular from the database) */}
                     {item.isPopular && (
                         <div className="absolute top-4 right-4 bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1 shadow-md z-10">
                             <FaStar className="w-3 h-3 text-white"/>
@@ -167,10 +152,8 @@ export default function MenuGrid({ items }) {
                         </div>
                     )}
                     
-                    {/* Image Container (Uses item.image URL from the database) */}
                     <div className="h-40 w-full overflow-hidden rounded-t-xl">
                         <img
-                            // IMPORTANT: Use item.image (which is the URL from Cloudinary/Admin)
                             src={item.image} 
                             alt={item.name}
                             className="h-full w-full object-cover transform hover:scale-105 transition duration-500" 
@@ -178,19 +161,14 @@ export default function MenuGrid({ items }) {
                     </div>
 
                     <div className="p-4 flex flex-col justify-between">
-                        {/* Title and Description (Uses data from the database) */}
                         <div>
                             <h3 className="font-bold text-base">{item.name}</h3>
-                            {/* Uses item.description from the database */}
                             <p className="text-gray-500 text-xs mt-1 leading-normal mb-3 line-clamp-2">{item.description}</p>
                         </div>
 
-                        {/* Price and Button (Bottom Row) */}
                         <div className="flex justify-between items-center mt-2">
-                            {/* Uses item.price from the database */}
                             <p className="text-orange-600 font-bold text-lg">LKR {item.price}</p> 
 
-                            {/* Add to Cart Button */}
                             <button
                                 onClick={() => addToCart(item)}
                                 className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center shadow-md hover:bg-orange-600 transition duration-150"

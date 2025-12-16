@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation, Link } from 'react-router-dom'; // Import these for routing
+import { useLocation, Link } from 'react-router-dom'; 
 import { BiRestaurant } from 'react-icons/bi';
 import { 
     FaUserCircle,
@@ -21,7 +21,6 @@ const navItems = [
 ];
 
 const AdminNavbar = () => {
-    // 1. Get the current URL path
     const location = useLocation();
 
     return (
@@ -34,13 +33,12 @@ const AdminNavbar = () => {
 
             <nav className="flex space-x-6">
                 {navItems.map((item) => {
-                    // 2. Check if the current path matches the item's link
                     const isActive = location.pathname === item.href;
 
                     return (
                         <Link
                             key={item.name}
-                            to={item.href} // Use 'to' instead of 'href'
+                            to={item.href} 
                             className={`flex items-center text-base font-medium transition duration-150 
                                 ${isActive 
                                     ? 'text-orange-600 border-b-2 border-orange-600 pb-1 font-semibold' 

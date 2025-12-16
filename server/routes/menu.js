@@ -3,10 +3,10 @@ import { getItems, createItem, updateItem, deleteItem } from "../controllers/men
 
 const router = express.Router();
 
-router.get("/", getItems);        // GET all items
-router.post("/", createItem);     // POST new item
-router.put("/:id", updateItem);   // PUT update item
-router.delete("/:id", deleteItem); // DELETE item
+router.get("/", getItems);        
+router.post("/", createItem);     
+router.put("/:id", updateItem);   
+router.delete("/:id", deleteItem); 
 
 export default router;
 
@@ -30,9 +30,9 @@ export default router;
 
 // // Admin Routes (Protected by auth and role check)
 // router.route('/')
-//     .post(protect, adminOnly, createItem); // Create new item
+//     .post(protect, adminOnly, createItem);
 // router.route('/:id')
-//     .put(protect, adminOnly, updateItem) // Update existing item
-//     .delete(protect, adminOnly, deleteItem); // Delete item
+//     .put(protect, adminOnly, updateItem) 
+//     .delete(protect, adminOnly, deleteItem); 
 
 // export default router;
