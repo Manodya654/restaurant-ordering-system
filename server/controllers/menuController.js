@@ -27,6 +27,8 @@ export const createItem = async (req, res) => {
       image,
       isPopular,
       status,
+      calories,
+      prepTime,
     });
     res.status(201).json(newItem);
   } catch (error) {
@@ -53,6 +55,8 @@ export const updateItem = async (req, res) => {
     existingItem.isPopular =
       req.body.isPopular !== undefined ? req.body.isPopular : existingItem.isPopular;
     existingItem.status = req.body.status || existingItem.status;
+    existingItem.calories = req.body.calories || existingItem.calories;
+    existingItem.prepTime = req.body.prepTime || existingItem.prepTime;
 
     const updatedItem = await existingItem.save();
     res.json(updatedItem);

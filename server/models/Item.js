@@ -13,6 +13,14 @@ const itemSchema = new mongoose.Schema(
       enum: ["Available", "Sold Out"], 
       default: "Available" 
     },
+    calories: { 
+    type: Number 
+  },
+  prepTime: { 
+      type: String, 
+      enum: ["5 - 10 mins", "10 - 15 mins", "15 - 20 mins", "20 - 30 mins", "30 - 45 mins", "Over 45 mins"], 
+      default: "10 - 15 mins" 
+    },
   },
   { timestamps: true }
 );
