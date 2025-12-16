@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Menu from "./pages/Menu";
+import Home from "./pages/Home";
 
 import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminMenu from "./pages/Admin/AdminMenu";
@@ -15,7 +16,7 @@ function App() {
     <Router>
       <Routes>
         {/* Public */}
-        <Route path="/" element={<Menu />} />
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/menu" element={<Menu />} />

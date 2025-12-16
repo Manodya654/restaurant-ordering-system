@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaMinus, FaPlus, FaTimes } from 'react-icons/fa';
 
-export default function ProductModal({ item, onClose, onAddToCart }) {
+export default function ItemModal({ item, onClose, onAddToCart }) {
   const [quantity, setQuantity] = useState(1);
   
   const priceValue = parseFloat(item.price.replace(/[^0-9.]/g, ''));
@@ -51,7 +51,7 @@ export default function ProductModal({ item, onClose, onAddToCart }) {
 
           <p className="text-gray-600 text-sm mb-6">{item.description}</p>
 
-          <h3 className="text-lg font-semibold mb-3">Product Details</h3>
+          <h3 className="text-lg font-semibold mb-3">Item Details</h3>
           <div className="grid grid-cols-2 gap-y-2 text-sm mb-6">
             <span className="text-gray-500">Category:</span>
             <span className="font-medium text-right">{item.category}</span>
