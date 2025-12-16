@@ -1,22 +1,17 @@
-// backend/controllers/categoryController.js
-import Category from '../models/Category.js';
+import Category from "../models/category.js";
 
-// @desc    Fetch all categories
-// @route   GET /api/categories
-// @access  Public (Used for both menu display and admin list)
-export const getCategories = async (req, res) => {
+// @  Fetch all categories
+ export const getCategories = async (req, res) => {
     try {
-        const categories = await Category.find().sort({ name: 1 });
-        res.json(categories);
+        const category = await Category.find().sort({ name: 1 });
+        res.json(category);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-// @desc    Create a new category
-// @route   POST /api/categories
-// @access  Private/Admin
-export const createCategory = async (req, res) => {
+// @ Create a new category
+ export const createCategory = async (req, res) => {
     const { name, image } = req.body;
     
     try {
@@ -25,28 +20,25 @@ export const createCategory = async (req, res) => {
             return res.status(400).json({ message: 'Category already exists' });
         }
         
-        const category = await Category.create({ name, image });
-        res.status(201).json(category);
+        const newCategory = await Category.create({ name, image });
+        res.status(201).json(newCategory);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-// @desc    Update a category
-// @route   PUT /api/categories/:id
-// @access  Private/Admin
-export const updateCategory = async (req, res) => {
+// @ Update a category
+ export const updateCategory = async (req, res) => {
     const { id } = req.params;
     const { name, image } = req.body;
 
     try {
-        const category = await Category.findById(id);
+        const existingCategory = await Category.findById(id);
 
-        if (category) {
-            category.name = name || category.name;
-            category.image = image || category.image;
-
-            const updatedCategory = await category.save();
+        if (existingCategory) {
+            existingCategory.name = name || existingCategory.name;
+            existingCategory.image = image || existingCategory.image;
+            const updatedCategory = await existingCategory.save();
             res.json(updatedCategory);
         } else {
             res.status(404).json({ message: 'Category not found' });
@@ -56,10 +48,8 @@ export const updateCategory = async (req, res) => {
     }
 };
 
-// @desc    Delete a category
-// @route   DELETE /api/categories/:id
-// @access  Private/Admin
-export const deleteCategory = async (req, res) => {
+// Delete a category
+ export const deleteCategory = async (req, res) => {
     const { id } = req.params;
     
     try {
@@ -74,3 +64,5 @@ export const deleteCategory = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+

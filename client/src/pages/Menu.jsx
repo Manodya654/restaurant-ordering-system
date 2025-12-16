@@ -6,16 +6,16 @@ import MenuGrid from "../components/MenuGrid";
 import Footer from "../components/Footer";
 
 export default function Menu() {
-    // 1. State to hold the fetched menu items
+    // hold the fetched menu items
     const [menuItems, setMenuItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('All'); 
 
-    // 2. Function to fetch data from the backend
+    // to fetch data from the backend
     const fetchMenuItems = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/items'); 
+            const response = await fetch('http://localhost:5000/api/menu'); 
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -24,7 +24,7 @@ export default function Menu() {
             const data = await response.json();
             setMenuItems(data); 
             
-            // Debugging: Log the categories found in the database to the console
+            // Debugging- Log the categories found in the database to the console
             console.log("Loaded items:", data);
         } catch (e) {
             console.error("Could not fetch menu items:", e);
@@ -34,28 +34,24 @@ export default function Menu() {
         }
     };
 
-    // 3. useEffect hook to run the fetch once when the component loads
     useEffect(() => {
         fetchMenuItems();
     }, []);
 
-    // 4. Filtering Logic (Improved)
+    //  Filtering Logic
     const handleCategoryChange = (category) => {
         setSelectedCategory(category);
     };
 
-    // Robust filtering: Converts everything to lowercase before comparing
+    // Robust filtering, Converts everything to lowercase before comparing
     const filteredItems = menuItems.filter(item => {
         if (selectedCategory === 'All') return true;
 
-        // Safety check: ensure item.category exists
         if (!item.category) return false;
 
-        // Compare lowercase versions to avoid "Burger" vs "burger" issues
         return item.category.toLowerCase().trim() === selectedCategory.toLowerCase().trim();
     });
 
-    // --- Conditional Rendering for Loading and Error States ---
     if (loading) {
         return (
             <div className="min-h-screen flex flex-col pt-28"> 
@@ -80,12 +76,10 @@ export default function Menu() {
         );
     }
 
-    // --- Main Render Section ---
     return (
         <div className="min-h-screen flex flex-col"> 
             <Navbar />
             
-            {/* Kept pt-28 to ensure Navbar doesn't cover content */}
             <div className="flex-grow pt-20"> 
                 
                 <div className="mb-1"> 
@@ -94,7 +88,6 @@ export default function Menu() {
 
                 <div className="max-w-7xl mx-auto w-full py-6">
                     
-                    {/* Pass the filtering function and current state */}
                     <Categories 
                         onCategoryChange={handleCategoryChange} 
                         activeCategory={selectedCategory} 
@@ -104,7 +97,6 @@ export default function Menu() {
                     {/* Display the filtered results */}
                     <MenuGrid items={filteredItems} /> 
                     
-                    {/* Helpful message if filter returns nothing */}
                     {filteredItems.length === 0 && (
                         <div className="text-center text-gray-500 mt-10">
                             No items found in the "{selectedCategory}" category.

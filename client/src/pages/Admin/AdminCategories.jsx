@@ -1,12 +1,8 @@
-// client/src/pages/Admin/AdminCategories.jsx
 import { useState, useEffect } from 'react'; // Removed useContext for now
 import AdminNavbar from '../../components/AdminNavbar';
 import { FaPlus, FaRegTrashAlt, FaRegEdit } from 'react-icons/fa';
-
-// --- AUTH TEMPORARILY DISABLED FOR CRUD TESTING ---
-// import { AuthContext } from '../../context/AuthContext'; 
-
 import * as categoryService from '../../services/categoryService'; 
+// Note: Ensure the path '../../services/categoryService' matches your folder structure
 
 const AdminCategories = () => {
     // const { user } = useContext(AuthContext); // Commented out user context extraction
@@ -17,8 +13,7 @@ const AdminCategories = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // --- API & CRUD Func
-    // tions ---
+    // --- API & CRUD Functions ---
 
     useEffect(() => {
         fetchCategories();

@@ -1,71 +1,53 @@
-// import { useState } from "react"
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
-// import Navbar from "./components/Navbar"
-// import Hero from "./components/Hero"
-// import Categories from "./components/Categories"
-// import MenuGrid from "./components/MenuGrid"
-// import Features from "./components/Features"
-// import Footer from "./components/Footer"
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Menu from "./pages/Menu";
 
-// export default function App() {
-//   const [selectedCategory, setSelectedCategory] = useState("All")
+import AdminLogin from "./pages/Admin/AdminLogin";
+import AdminMenu from "./pages/Admin/AdminMenu";
+import AdminCategories from "./pages/Admin/AdminCategories";
 
-//   const SPACER_HEIGHT_CLASS = "h-20";
-
-  
-//   return (
-//     <>
-//       <Navbar />
-
-//       <div className={SPACER_HEIGHT_CLASS}></div>
-      
-//       <main className="app-container">
-//         <Hero />
-//         <Categories
-//           selectedCategory={selectedCategory}
-//           setSelectedCategory={setSelectedCategory}
-//         />
-//         <MenuGrid selectedCategory={selectedCategory} />
-//       </main>
-
-//       <Features />
-//       <Footer />
-//     </>
-//   )
-// }
-
-// // client/src/App.jsx
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import AdminDashboard from './pages/Admin/AdminMenu.jsx'; 
-import Menu from './pages/Menu.jsx'; 
-import Login from './pages/Login.jsx';
-import Register from './pages/Register.jsx';
-import { AuthProvider } from './context/AuthContext.jsx';
-import AdminCategories from './pages/Admin/AdminCategories.jsx';
-import AdminLogin from './pages/Admin/AdminLogin.jsx';
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute.jsx";
 
 function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Menu />} /> 
-            <Route path="/menu" element={<Menu />} /> 
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            
-            
-            {/* Admin Route */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/menu" element={<AdminDashboard />} />
-            <Route path="/admin/categories" element={<AdminCategories />} />
+  return (
+    <Router>
+      <Routes>
+        {/* Public */}
+        <Route path="/" element={<Menu />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/menu" element={<Menu />} />
+        <Route path="/history" element={<Menu />} />
+        <Route path="/cart" element={<Menu />} />
 
-            
-          </Routes>
-        </BrowserRouter>
-    </AuthProvider>
-  );
+        {/* Admin */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+
+        <Route
+          path="/admin/menu"
+          element={
+            <ProtectedAdminRoute>
+              <AdminMenu />
+            </ProtectedAdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/categories"
+          element={
+            <ProtectedAdminRoute>
+              <AdminCategories />
+            </ProtectedAdminRoute>
+          }
+        />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

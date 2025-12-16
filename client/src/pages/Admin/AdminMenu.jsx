@@ -1,9 +1,7 @@
-// client/src/pages/AdminMenu.jsx
 import { useState, useEffect } from 'react';
 import AdminNavbar from '../../components/AdminNavbar';
 import { FaSearch, FaRegEdit, FaRegTrashAlt, FaPlus, FaTable, FaTimes } from 'react-icons/fa';
 
-// --- Helper Functions ---
 
 const getCategoryPill = (category) => {
     let style = 'px-3 py-1 text-xs rounded-full font-semibold ';
@@ -62,7 +60,7 @@ const AdminMenu = () => {
     const fetchItems = async () => {
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5000/api/items');
+            const response = await fetch('http://localhost:5000/api/menu');
             const data = await response.json();
             setItems(data);
         } catch (error) {
@@ -94,8 +92,9 @@ const AdminMenu = () => {
         }
 
         const url = isEditing 
-          ? `http://localhost:5000/api/items/${isEditing}`
-          : 'http://localhost:5000/api/items';
+            ? `http://localhost:5000/api/menu/${isEditing}`
+            : 'http://localhost:5000/api/menu';
+
         
         const method = isEditing ? 'PUT' : 'POST';
 
@@ -125,7 +124,8 @@ const AdminMenu = () => {
         if(!window.confirm("Are you sure you want to delete this item?")) return;
 
         try {
-            const response = await fetch(`http://localhost:5000/api/items/${id}`, { method: 'DELETE' });
+            const response = await fetch(`http://localhost:5000/api/menu/${id}`, { method: 'DELETE' });
+
             
             if (response.ok) {
                 // SUCCESS: Update the local state immediately

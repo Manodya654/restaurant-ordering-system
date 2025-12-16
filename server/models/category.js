@@ -1,5 +1,4 @@
-// backend/models/Category.js
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const categorySchema = new mongoose.Schema({
     name: { 
@@ -12,11 +11,9 @@ const categorySchema = new mongoose.Schema({
         type: String, 
         required: true 
     },
-    // You could add a description or color code here if needed
 }, {
     timestamps: true
 });
 
-const Category = mongoose.model('Category', categorySchema);
 
-export default Category;
+export default mongoose.model("Category", categorySchema); 

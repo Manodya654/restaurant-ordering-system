@@ -1,8 +1,5 @@
-// client/src/services/categoryService.js
-
 const API_URL = 'http://localhost:5000/api/categories';
 
-// Helper function to get the authorization header
 const getConfig = (token) => ({
     headers: {
         'Content-Type': 'application/json',
@@ -20,18 +17,28 @@ export const getCategories = async () => {
 };
 
 // POST: Create a new category (Admin)
-export const createCategory = async (categoryData, token) => {
+// client/src/services/categoryService.js (Focus on createCategory)
+
+export const createCategory = async (categoryData) => {
+    // ... fetch setup ...
     const response = await fetch(API_URL, {
         method: 'POST',
-        ...getConfig(token),
+        headers: {
+            'Content-Type': 'application/json',
+            // Ensure you are passing the Authorization token if needed
+        },
         body: JSON.stringify(categoryData),
     });
 
+    // CRITICAL: Check the response status BEFORE parsing JSON
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create category');
+        // If the server responded with 400 or 500, we throw a descriptive error
+        const errorData = await response.json(); 
+        throw new Error(errorData.message || `Failed to create category with status ${response.status}`);
     }
-    return response.json();
+
+    // Only return the data if the status was 2xx
+    return await response.json();
 };
 
 // PUT: Update an existing category (Admin) 

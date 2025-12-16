@@ -1,14 +1,9 @@
-// server/routes/userRoutes.js (Update this file)
+import express from "express";
+import { registerUser, loginUser } from "../controllers/userController.js";
 
-const express = require('express');
-const { registerUser, loginUser, loginAdmin } = require('../controllers/userController');
 const router = express.Router();
 
-// Public routes for all users (customers)
-router.post('/register', registerUser); // Customer registration
-router.post('/login', loginUser);       // Customer login
+router.post("/register", registerUser); // optional
+router.post("/login", loginUser);
 
-// Specific route for Admin login
-router.post('/admin/login', loginAdmin); // Admin login (Checks for role: 'admin')
-
-module.exports = router;
+export default router;
