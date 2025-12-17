@@ -10,7 +10,7 @@ const AdminCategories = () => {
         slug: '',
         image: '',
         color: '#f97316',
-        displayOrder: 0, 
+        itemCount: 0, 
         isActive: true 
     });
     const [isEditing, setIsEditing] = useState(null); 
@@ -44,7 +44,7 @@ const AdminCategories = () => {
     };
 
     const resetForm = () => {
-        setFormData({ name: '', slug: '', image: '', color: '#f97316', displayOrder: 0, isActive: true });
+        setFormData({ name: '', slug: '', image: '', color: '#f97316', itemCount: 0, isActive: true });
         setIsEditing(null);
     };
 
@@ -88,7 +88,7 @@ const AdminCategories = () => {
             name: category.name,
             image: category.image,
             color: category.color || '#f97316',
-            displayOrder: category.displayOrder || 0,
+            itemCount: category.itemCount || 0,
             isActive: category.isActive ?? true
         });
         setIsEditing(category._id);
@@ -123,7 +123,7 @@ const AdminCategories = () => {
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead className="bg-gray-50">
                                         <tr>
-                                            {['IMAGE', 'NAME', 'ORDERS', 'STATUS', 'ACTIONS'].map(header => (
+                                            {['IMAGE', 'NAME', 'ITEM COUNT', 'STATUS', 'ACTIONS'].map(header => (
                                                 <th key={header} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{header}</th>
                                             ))}
                                         </tr>
@@ -149,7 +149,7 @@ const AdminCategories = () => {
                                                         {category.name}
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-4 text-sm font-bold text-orange-600">{category.displayOrder}</td>
+                                                <td className="px-6 py-4 text-sm font-bold text-orange-600">{category.itemCount}</td>
                                                 <td className="px-6 py-4 text-sm">
                                                     {category.isActive ? 
                                                         <span className="flex items-center text-green-600"><FaCheckCircle className="mr-1"/> Active</span> : 
@@ -176,8 +176,8 @@ const AdminCategories = () => {
                                         <input name="name" value={formData.name} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" required />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Display Order (Lower appears first)</label>
-                                        <input type="number" name="displayOrder" value={formData.displayOrder} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" />
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">No of Items (Lower appears first)</label>
+                                        <input type="number" name="itemCount" value={formData.itemCount} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" />
                                     </div>
                                 </div>
 

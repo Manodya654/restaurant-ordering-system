@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { FaPlus, FaStar } from "react-icons/fa";
 import ItemModal from "./ItemModal"; 
+import toast, { Toaster } from 'react-hot-toast';
+import { useCart } from "../context/CartContext"; // 1. Import the hook
+
 export default function MenuGrid({ items }) {
+    const { addToCart } = useCart(); // 2. Get the global function
     const [selectedItem, setSelectedItem] = useState(null);
 
     const handleOpenModal = (item) => {
@@ -12,8 +16,10 @@ export default function MenuGrid({ items }) {
         setSelectedItem(null);
     };
 
-    const addToCart = (item, quantity = 1) => {
-        alert(`${quantity}x ${item.name} added to cart!`);
+    // 3. Update this function to use the context
+    const handleAddToCart = (item, quantity = 1) => {
+        addToCart(item, quantity); // This updates the Navbar and Checkout
+        toast.success(`${quantity}x ${item.name} added to cart!`);
         handleCloseModal();
     };
 
@@ -29,7 +35,8 @@ export default function MenuGrid({ items }) {
 
     return (
         <div className="container mx-auto">
-            <section className="px-8 mt-8 grid sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <Toaster />
+            <section className="px-0 mt-2 grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                 {items.map((item) => (
                     <div
                         key={item._id}
@@ -60,14 +67,14 @@ export default function MenuGrid({ items }) {
                             </div>
 
                             <div className="flex justify-between items-center mt-2">
-                                <p className="text-orange-600 font-bold text-lg">
+                                <p className="text-orange-600 font-bold text-">
                                     LKR {item.price}
                                 </p>
 
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation(); 
-                                        addToCart(item);
+                                        handleAddToCart(item); // Use the new handler
                                     }}
                                     className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center shadow-md hover:bg-orange-600 transition duration-150"
                                 >
@@ -87,7 +94,7 @@ export default function MenuGrid({ items }) {
                         img: selectedItem.image 
                     }}
                     onClose={handleCloseModal}
-                    onAddToCart={addToCart}
+                    onAddToCart={handleAddToCart} // Pass the correct handler
                 />
             )}
         </div>

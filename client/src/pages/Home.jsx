@@ -71,7 +71,7 @@ const Home = () => {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
               {categories.map((category, index) => (
                 <CategoryCard key={index} category={category} />
               ))}
@@ -80,9 +80,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Menu Items (Using MenuGrid) */}
-      {/* Featured Menu Items (Using MenuGrid) */}
-<section className="py-10 bg-gray-50">
+<section className="py-8 bg-gray-50">
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div className="mb-8">
       <h3 className="text-3xl font-bold text-gray-800 mb-2">Popular Hits</h3>
@@ -92,7 +90,6 @@ const Home = () => {
     {loading ? (
         <div className="text-center py-10">Loading menu...</div>
     ) : (
-      /* REMOVED the extra grid wrapper here to fix the squashed cards */
       <MenuGrid items={popularItems} /> 
     )}
     
@@ -104,7 +101,6 @@ const Home = () => {
   </div>
 </section>
 
-      {/* About Section */}
       <section className="py-16 bg-cover bg-center relative" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(https://images.unsplash.com/photo-1556911220-bff31c812dba?w=1920&q=80)' }}>
         <div className="max-w-4xl mx-auto px-4 text-center text-white">
           <h2 className="text-4xl font-bold mb-6 italic">Flavor Town</h2>

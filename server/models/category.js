@@ -18,7 +18,7 @@ const categorySchema = new mongoose.Schema(
       required: true,
     },
     color: { type: String, default: '#f97316' },
-    displayOrder: {
+    itemCount: {
       type: Number,
       default: 0,
     },

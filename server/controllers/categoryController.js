@@ -2,7 +2,7 @@
 
 // export const getCategories = async (req, res) => {
 //     try {
-//         const categories = await Category.find().sort({ displayOrder: 1, name: 1 });
+//         const categories = await Category.find().sort({ itemCount: 1, name: 1 });
 //         res.json(categories);
 //     } catch (error) {
 //         console.error(error);
@@ -12,7 +12,7 @@
 
 // //  Create a new category
 // export const createCategory = async (req, res) => {
-//     const { name, image, displayOrder, isActive } = req.body;
+//     const { name, image, itemCount, isActive } = req.body;
     
 //     try {
 //         const categoryExists = await Category.findOne({ name });
@@ -24,7 +24,7 @@
 //         const newCategory = await Category.create({ 
 //             name, 
 //             image, 
-//             displayOrder: displayOrder || 0, 
+//             itemCount: itemCount || 0, 
 //             isActive: isActive !== undefined ? isActive : true 
 //         });
         
@@ -37,7 +37,7 @@
 // // @ Update a category
 // export const updateCategory = async (req, res) => {
 //     const { id } = req.params;
-//     const { name, image, displayOrder, isActive } = req.body;
+//     const { name, image, itemCount, isActive } = req.body;
 
 //     try {
 //         const existingCategory = await Category.findById(id);
@@ -46,8 +46,8 @@
 //         }
 //         existingCategory.name = name || existingCategory.name;
 //         existingCategory.image = image || existingCategory.image;
-//         existingCategory.displayOrder = 
-//             displayOrder !== undefined ? displayOrder : existingCategory.displayOrder;
+//         existingCategory.itemCount = 
+//             itemCount !== undefined ? itemCount : existingCategory.itemCount;
 //         existingCategory.isActive = 
 //             isActive !== undefined ? isActive : existingCategory.isActive;
 
@@ -81,7 +81,7 @@ import Category from "../models/category.js";
 
 export const getCategories = async (req, res) => {
   try {
-    const categories = await Category.find().sort({ displayOrder: 1, name: 1 });
+    const categories = await Category.find().sort({ itemCount: 1, name: 1 });
     res.json(categories);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -89,7 +89,7 @@ export const getCategories = async (req, res) => {
 };
 
 export const createCategory = async (req, res) => {
-  const { name, image, color, displayOrder, isActive } = req.body;
+  const { name, image, color, itemCount, isActive } = req.body;
 
   try {
     const categoryExists = await Category.findOne({ name });
@@ -101,7 +101,7 @@ export const createCategory = async (req, res) => {
       name,
       image,
       color,
-      displayOrder: displayOrder || 0,
+      itemCount: itemCount || 0,
       isActive: isActive ?? true,
     });
 
@@ -113,7 +113,7 @@ export const createCategory = async (req, res) => {
 
 export const updateCategory = async (req, res) => {
   const { id } = req.params;
-  const { name, image, color, displayOrder, isActive } = req.body;
+  const { name, image, color, itemCount, isActive } = req.body;
 
   try {
     const category = await Category.findById(id);
@@ -125,7 +125,7 @@ export const updateCategory = async (req, res) => {
     category.name = name ?? category.name;
     category.image = image ?? category.image;
     category.color = color ?? category.color;
-    category.displayOrder = displayOrder ?? category.displayOrder;
+    category.itemCount = itemCount ?? category.itemCount;
     category.isActive = isActive ?? category.isActive;
 
     const updated = await category.save();

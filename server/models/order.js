@@ -1,26 +1,61 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const orderSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
+const OrderSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
-    image: {
-      type: String,
-      required: true,
+
+    pickupCode: {
+        type: String,
+        required: true,
+        unique: true,
+        default: () => Math.random().toString(36).substring(2, 6).toUpperCase()
     },
+
+    items: [
+        {
+            menuItem: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Menu',
+                required: true
+            },
+            name: { type: String, required: true },
+            quantity: { type: Number, required: true, min: 1 },
+            price: { type: Number, required: true },
+            subtotal: { type: Number, required: true },
+        }
+    ],
+
     status: {
-      type: String,
-      enum: ["pending", "completed", "canceled"],
-      default: "pending",
+        type: String,
+        enum: ['Pending', 'Confirmed', 'Preparing', 'Ready for Pickup', 'Completed', 'Cancelled'],
+        default: 'Pending'
     },
-  },
-  { timestamps: true }
-);
+    paymentStatus: {
+        type: String,
+        enum: ['Unpaid', 'Paid'],
+        default: 'Unpaid'
+    },
+    paymentMethod: {
+        type: String,
+        enum: ['Online', 'At Counter'],
+        required: true
+    },
+    
+    // Allows customer to schedule a pickup or choose "As soon as possible"
+    scheduledPickupTime: {
+        type: Date,
+        default: Date.now
+    },
 
-const order = mongoose.model("Order", orderSchema);
+    specialInstructions: {
+        type: String,
+        trim: true
+    }
+}, { 
+    timestamps: true 
+});
 
-export default order;
+export default mongoose.model('Order', OrderSchema);

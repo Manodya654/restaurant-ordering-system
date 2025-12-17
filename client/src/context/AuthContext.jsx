@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState } from 'react';
 import * as authService from '../services/authService'; 
 
 export const AuthContext = createContext(); 
@@ -10,28 +10,30 @@ export const AuthProvider = ({ children }) => {
     });
     const [isLoading, setIsLoading] = useState(false);
     
-    const login = async (userData) => {
+    const login = async (email, password) => {
         setIsLoading(true);
         try {
-            const data = await authService.login(userData); 
-            setUser(data);
+            const data = await authService.login(email, password); 
+            if (data.user) {
+                setUser(data.user);
+            }
             return data;
         } finally {
             setIsLoading(false);
         }
     };
     
-    const register = async (userData) => {
-        setIsLoading(true);
-        try {
-            
-            const data = await authService.register(userData);
-            setUser(data);
-            return data;
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    // Example of what your authService register function should look like
+const register = async (userData) => {
+    const response = await fetch('http://localhost:5000/api/users/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData), // Sends whatever object we give it
+    });
+    return response.json();
+};
 
     const logout = () => {
         authService.logout(); 
@@ -41,11 +43,12 @@ export const AuthProvider = ({ children }) => {
     const contextValue = {
         user, 
         isLoading, 
-        
         login,
         logout,
         register,
         setUser, 
+        // Helper to check if admin
+        isAdmin: user?.role === 'admin'
     };
 
     return (

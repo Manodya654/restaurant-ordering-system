@@ -12,40 +12,47 @@ const iconMap = {
     "Non-Vegan": <TbMeat size={20} />,
     "Asian": <GiNoodles size={20} />,
     "Drinks": <BiWine size={20} />,
-    
 };
 
 export default function Categories({ activeCategory, onCategoryChange, menuItems }) {
     
-    
     const uniqueCategories = ['All'];
     const lowerCaseCategories = ['all']; 
     
-    menuItems.forEach(item => {
-        if (item.category) {
-            const categoryName = item.category.trim();
-            const lowerCaseName = categoryName.toLowerCase();
-            
-           
-            if (!lowerCaseCategories.includes(lowerCaseName)) {
-               
-                uniqueCategories.push(categoryName); 
-                lowerCaseCategories.push(lowerCaseName);
+    // SAFETY CHECK: Ensure menuItems exists before looping
+    if (menuItems && menuItems.length > 0) {
+        menuItems.forEach(item => {
+            if (item.category) {
+                // FIX: Extract name if category is an object, otherwise use the string
+                const rawName = typeof item.category === 'object' 
+                    ? item.category.name 
+                    : item.category;
+
+                // Ensure rawName exists and is a string before trimming
+                if (rawName) {
+                    const categoryName = String(rawName).trim();
+                    const lowerCaseName = categoryName.toLowerCase();
+                    
+                    if (!lowerCaseCategories.includes(lowerCaseName)) {
+                        uniqueCategories.push(categoryName); 
+                        lowerCaseCategories.push(lowerCaseName);
+                    }
+                }
             }
-        }
-    });
+        });
+    }
  
     return (
-        <div className="flex flex-wrap justify-start gap-3 px-20 py-5 mb-8">
+        /* Reduced horizontal padding from px-20 to px-4 for better fit */
+        <div className="flex flex-wrap justify-start gap-3 px-4 py-5 mb-8">
             {uniqueCategories.map((category) => {
-                
                 const Icon = iconMap[category] || iconMap['All']; 
-                const isActive = activeCategory.toLowerCase() === category.toLowerCase();
+                // Defensive check for activeCategory to prevent toLowerCase errors
+                const isActive = (activeCategory || 'All').toLowerCase() === category.toLowerCase();
                 
                 return (
                     <button
                         key={category}
-                        
                         onClick={() => onCategoryChange(category)} 
                         className={`flex items-center space-x-2 px-4 py-2 rounded-full font-medium transition-colors duration-200 
                             ${isActive 
