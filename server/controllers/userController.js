@@ -66,7 +66,7 @@ export const loginUser = async (req, res) => {
 
     email = email.trim().toLowerCase();
 
-    if (email === "admin@flavortown.gmail.com" && password === "admin1234") {
+    if (email === "admin@flavortown.com" && password === "admin1234") {
       const adminData = {
         id: "admin-special-id",
         name: "Admin User",
