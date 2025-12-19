@@ -82,9 +82,9 @@ export function loginUser(req,res){
                    image: user.image
                };
 
-               const token = jwt.sign(payload, "secretKey96$2025",
+               const token = jwt.sign(payload, process.env.JWT_SECRET, {
                    
-               )
+               });
               return res.status(200).json({ 
               message: "Login successful",
               token: token

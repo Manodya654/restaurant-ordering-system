@@ -3,10 +3,13 @@ import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import userRouter from './routes/userRouter.js';
 import cors from 'cors';
+import dotenv from 'dotenv';
+dotenv.config();
 
 
 
-const mongoURI = "mongodb+srv://admin:2025@cluster0.opp1yis.mongodb.net/?appName=Cluster0"
+const mongoURI = process.env.MONGO_URL;
+
 mongoose.connect(mongoURI).then(() => 
     {console.log("Connected to MongoDB");})
 
@@ -28,7 +31,7 @@ app.use(
 
             console.log(token);
 
-            jwt.verify(token, "secretKey96$2025", 
+            jwt.verify(token, process.env.JWT_SECRET, 
                 (error,content)=>{
                     if(content == null){
                         console.log("Invalid token");
