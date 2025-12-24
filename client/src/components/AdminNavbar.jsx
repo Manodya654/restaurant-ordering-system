@@ -8,15 +8,21 @@ import {
     FaClipboardList,
     FaUsers,
     FaCog,
-    FaSignOutAlt 
+    FaSignOutAlt, 
+    FaRadiation,
+    FaTable,
+    FaMeteor,
+    FaDashcube
 } from 'react-icons/fa';
-import { FaBowlFood } from 'react-icons/fa6';
+import { FaBowlFood, FaStar } from 'react-icons/fa6';
 
 const navItems = [
-    { name: 'Dashboard', icon: <FaHome className="mr-2" />, href: '/admin/dashboard' },
+    { name: 'Dashboard', icon: <FaDashcube className="mr-2" />, href: '/admin/dashboard' },
     { name: 'Orders', icon: <FaClipboardList className="mr-2" />, href: '/admin/orders' },
     { name: 'Categories', icon: <FaBowlFood className="mr-2" />, href: '/admin/categories' }, 
     { name: 'Menu', icon: <BiRestaurant className="mr-2" />, href: '/admin/menu' }, 
+    { name: 'Reviews', icon: <FaStar className="mr-2" />, href: '/admin/reviews' },
+    { name: 'Reservations', icon: <FaTable className="mr-2" />, href: '/admin/reservations' },
     { name: 'Customers', icon: <FaUsers className="mr-2" />, href: '/admin/customers' },
     { name: 'Settings', icon: <FaCog className="mr-2" />, href: '/admin/settings' },
 ];

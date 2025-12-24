@@ -19,7 +19,7 @@ const HomeScreen = () => {
                 {/* Left Side Content */}
                 <div className="text-white space-y-6">
                     <div className="inline-block bg-orange-500/20 border border-orange-500/30 px-4 py-1 rounded-full text-xs font-semibold text-orange-200">
-                        🎉 Free delivery on orders over LKR 3000
+                        🎉 Free takeaway on orders over LKR 3000
                     </div>
                     
                     <h1 className="text-5xl lg:text-7xl font-extrabold leading-tight">

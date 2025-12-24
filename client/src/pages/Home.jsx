@@ -4,24 +4,24 @@ import HomeScreen from '../components/HomeScreen'
 import CategoryCard from '../components/CategoryCard'
 import MenuGrid from '../components/MenuGrid' // Swapped from DishCard
 import Footer from '../components/Footer'
+import BrandStory from '../components/BrandStory'
 
 const Home = () => {
   const [categories, setCategories] = useState([])
   const [popularItems, setPopularItems] = useState([])
   const [loading, setLoading] = useState(true)
 
-  const fetchData = async () => {
+  // ... inside Home.jsx fetchData function
+const fetchData = async () => {
     try {
-      // Using native fetch instead of axios
       const [catRes, menuRes] = await Promise.all([
         fetch('http://localhost:5000/api/categories'),
-        fetch('http://localhost:5000/api/menu') // Assuming this is your endpoint
+        fetch('http://localhost:5000/api/menu') 
       ])
 
       const catData = await catRes.json()
       const menuData = await menuRes.json()
 
-      // Set categories from DB or fallback
       if (catData && catData.length > 0) {
         setCategories(catData)
       } else {
@@ -33,9 +33,9 @@ const Home = () => {
         ])
       }
 
-      // Filter popular items for the home page display
-      const popular = menuData.filter(item => item.isPopular).slice(0, 4)
-      setPopularItems(popular.length > 0 ? popular : menuData.slice(0, 4))
+      // CHANGE: Slice 10 items instead of 4
+      const popular = menuData.filter(item => item.isPopular).slice(0, 10)
+      setPopularItems(popular.length > 0 ? popular : menuData.slice(0, 10))
 
     } catch (error) {
       console.error("Error fetching home data:", error)
@@ -52,9 +52,11 @@ const Home = () => {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <HomeScreen />
+
+      <BrandStory/>
       
       {/* Browse Categories */}
-      <section className="py-10 bg-white">
+      <section className="py-10 bg-[#FFF7ED]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
             <div>
@@ -80,35 +82,35 @@ const Home = () => {
         </div>
       </section>
 
-<section className="py-8 bg-gray-50">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="mb-8">
-      <h3 className="text-3xl font-bold text-gray-800 mb-2">Popular Hits</h3>
-      <p className="text-gray-600">Our customers' favorites right now</p>
-    </div>
-    
-    {loading ? (
-        <div className="text-center py-10">Loading menu...</div>
-    ) : (
-      <MenuGrid items={popularItems} /> 
-    )}
-    
-    <div className="mt-12 text-center">
-        <a href="/menu" className="bg-orange-600 text-white px-8 py-3 rounded-full font-bold hover:bg-orange-700 transition">
-          Explore Full Menu
-        </a>
-    </div>
-  </div>
-</section>
+    <section className="py-8 bg-[#FFF7ED]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <h3 className="text-3xl font-bold text-gray-800 mb-2">Popular Hits</h3>
+          <p className="text-gray-600">Our customers' favorites right now</p>
+        </div>
+        
+        {loading ? (
+            <div className="text-center py-10">Loading menu...</div>
+        ) : (
+          <MenuGrid items={popularItems} /> 
+        )}
+        
+        <div className="mt-12 text-center">
+            <a href="/menu" className="bg-orange-600 text-white px-8 py-3 rounded-full font-bold hover:bg-orange-700 transition">
+              Explore Full Menu
+            </a>
+        </div>
+      </div>
+    </section>
 
-      <section className="py-16 bg-cover bg-center relative" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(https://images.unsplash.com/photo-1556911220-bff31c812dba?w=1920&q=80)' }}>
+      {/* <section className="py-16 bg-cover bg-center relative" style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(https://images.unsplash.com/photo-1556911220-bff31c812dba?w=1920&q=80)' }}>
         <div className="max-w-4xl mx-auto px-4 text-center text-white">
           <h2 className="text-4xl font-bold mb-6 italic">Flavor Town</h2>
           <p className="text-lg leading-relaxed mb-8">
-            Born in the kitchen, not the boardroom. Since 2017, we've been serving up fresh ingredients and unforgettable flavors.
+            Since 2017, we've been serving up fresh ingredients and unforgettable flavors.
           </p>
         </div>
-      </section>
+      </section> */}
 
       <Footer />
     </div>

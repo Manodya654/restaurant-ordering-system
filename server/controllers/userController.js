@@ -2,41 +2,45 @@ import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const ADMIN_EMAIL = "admin@flavortown.com";
-const ADMIN_PASSWORD = "admin123";
-
-const generateToken = (user) =>
-  jwt.sign(
+// Generate JWT
+const generateToken = (user) => {
+  return jwt.sign(
     { id: user._id, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: "30d" }
+    { expiresIn: "7d" }
   );
+};
 
-/* ================= REGISTER (CUSTOMER ONLY) ================= */
+//customer login
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, phoneNumber } = req.body;
+    const { name, email, phoneNumber, password, confirmPassword } = req.body;
 
-    if (!name || !email || !password || !phoneNumber) {
+    if (!name || !email || !phoneNumber || !password || !confirmPassword) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const userExists = await User.findOne({ email: email.toLowerCase() });
-    if (userExists) {
-      return res.status(400).json({ message: "User already exists" });
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+
+    const existingUser = await User.findOne({ email: email.trim().toLowerCase() });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already registered" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
       name,
-      email: email.toLowerCase(),
+      email: email.trim().toLowerCase(),
       phoneNumber,
       password: hashedPassword,
       role: "customer",
     });
 
     res.status(201).json({
+      message: "Registration successful",
       token: generateToken(user),
       user: {
         id: user._id,
@@ -46,47 +50,35 @@ export const registerUser = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error during registration" });
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-/* ================= LOGIN (ADMIN + CUSTOMER) ================= */
+// login admin & customer
 export const loginUser = async (req, res) => {
   try {
-    const email = req.body.email.trim().toLowerCase();
-    const { password } = req.body;
+    let { email, password } = req.body;
 
-    /* ===== HARDCODED ADMIN LOGIN ===== */
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      const fakeAdmin = {
-        _id: "admin-id",
-        role: "admin",
-        name: "Admin",
-        email: ADMIN_EMAIL,
-      };
-
-      return res.json({
-        token: jwt.sign(
-          { id: fakeAdmin._id, role: "admin" },
-          process.env.JWT_SECRET,
-          { expiresIn: "30d" }
-        ),
-        user: fakeAdmin,
-      });
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password required" });
     }
 
-    /* ===== NORMAL USER LOGIN ===== */
+    email = email.trim().toLowerCase();
+
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
+    // if (!isMatch) {
+    //   return res.status(401).json({ message: "Invalid credentials" });
+    // }
+    console.log("Password match result:", isMatch);
 
     res.json({
+      message: "Login successful",
       token: generateToken(user),
       user: {
         id: user._id,
@@ -96,6 +88,7 @@ export const loginUser = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error during login" });
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 };

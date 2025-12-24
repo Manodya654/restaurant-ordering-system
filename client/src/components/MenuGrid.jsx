@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { FaPlus, FaStar } from "react-icons/fa";
 import ItemModal from "./ItemModal"; 
 import toast, { Toaster } from 'react-hot-toast';
-import { useCart } from "../context/CartContext"; // 1. Import the hook
+import { useCart } from "../context/CartContext"; 
 
 export default function MenuGrid({ items }) {
-    const { addToCart } = useCart(); // 2. Get the global function
+    const { addToCart } = useCart(); 
     const [selectedItem, setSelectedItem] = useState(null);
 
     const handleOpenModal = (item) => {
@@ -16,9 +16,8 @@ export default function MenuGrid({ items }) {
         setSelectedItem(null);
     };
 
-    // 3. Update this function to use the context
     const handleAddToCart = (item, quantity = 1) => {
-        addToCart(item, quantity); // This updates the Navbar and Checkout
+        addToCart(item, quantity); 
         toast.success(`${quantity}x ${item.name} added to cart!`);
         handleCloseModal();
     };
@@ -36,6 +35,7 @@ export default function MenuGrid({ items }) {
     return (
         <div className="container mx-auto">
             <Toaster />
+            {/* CHANGE: Added xl:grid-cols-5 to ensure 5 items per row */}
             <section className="px-0 mt-2 grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                 {items.map((item) => (
                     <div
@@ -74,7 +74,7 @@ export default function MenuGrid({ items }) {
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation(); 
-                                        handleAddToCart(item); // Use the new handler
+                                        handleAddToCart(item); 
                                     }}
                                     className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center shadow-md hover:bg-orange-600 transition duration-150"
                                 >
@@ -94,7 +94,7 @@ export default function MenuGrid({ items }) {
                         img: selectedItem.image 
                     }}
                     onClose={handleCloseModal}
-                    onAddToCart={handleAddToCart} // Pass the correct handler
+                    onAddToCart={handleAddToCart} 
                 />
             )}
         </div>

@@ -35,10 +35,10 @@ export default function Login() {
             navigate('/menu'); 
         }, 1500); 
       } else {
-        setMessage(`❌ Login failed: ${data.message || 'Invalid credentials.'}`);
+        setMessage(`Login failed: ${data.message || 'Invalid credentials.'}`);
       }
     } catch (error) {
-      setMessage("❌ Network error: Could not connect to the server.");
+      setMessage("Network error: Could not connect to the server.");
     } finally {
       setIsLoading(false);
     }

@@ -1,6 +1,6 @@
 const API_URL = "http://localhost:5000/api/users";
 
-export const loginRequest = async (email, password) => {
+export const login = async (email, password) => {
   const res = await fetch(`${API_URL}/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -8,11 +8,7 @@ export const loginRequest = async (email, password) => {
   });
 
   const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.message || "Login failed");
-  }
-
+  if (!res.ok) throw new Error(data.message || "Login failed");
   return data;
 };
 

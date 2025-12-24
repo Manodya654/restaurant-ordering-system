@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import AdminNavbar from '../../components/AdminNavbar';
-import { Star, CheckCircle, XCircle, Eye, Trash2 } from 'lucide-react';
+import { Star, CheckCircle, XCircle, Eye, Trash2, MessageSquare } from 'lucide-react';
 
 const AdminReviews = () => {
   const { user } = useContext(AuthContext);
@@ -11,10 +11,8 @@ const AdminReviews = () => {
 
   useEffect(() => {
     fetchReviews();
-    // Auto-refresh every 30 seconds
     const interval = setInterval(fetchReviews, 30000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchReviews = async () => {
@@ -84,7 +82,7 @@ const AdminReviews = () => {
       <Star
         key={index}
         size={16}
-        className={index < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
+        className={index < rating ? 'fill-orange-400 text-orange-400' : 'text-gray-200'}
       />
     ));
   };
@@ -99,10 +97,10 @@ const AdminReviews = () => {
     return (
       <>
         <AdminNavbar />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-[#FFF7ED] flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-500 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading reviews...</p>
+            <p className="mt-4 text-gray-600 font-medium">Loading reviews...</p>
           </div>
         </div>
       </>
@@ -112,126 +110,123 @@ const AdminReviews = () => {
   return (
     <>
       <AdminNavbar />
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-[#FFF7ED] py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900">Review Management</h1>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setFilter('all')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  filter === 'all'
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                All ({reviews.length})
-              </button>
-              <button
-                onClick={() => setFilter('approved')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  filter === 'approved'
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                Approved ({reviews.filter(r => r.isApproved).length})
-              </button>
-              <button
-                onClick={() => setFilter('pending')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  filter === 'pending'
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                Pending ({reviews.filter(r => !r.isApproved).length})
-              </button>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900">Reviews</h1>
+              <p className="text-gray-600 mt-1">Manage customer feedback and ratings.</p>
+            </div>
+
+            <div className="flex bg-white p-1.5 rounded-2xl shadow-sm border border-orange-100 gap-1">
+              {['all', 'approved', 'pending'].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setFilter(type)}
+                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                    filter === type
+                      ? 'bg-orange-500 text-white shadow-md'
+                      : 'text-gray-500 hover:bg-orange-50 hover:text-orange-600'
+                  }`}
+                >
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                  <span className="ml-2 text-xs opacity-70">
+                    ({type === 'all' ? reviews.length : reviews.filter(r => type === 'approved' ? r.isApproved : !r.isApproved).length})
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Reviews Grid */}
           <div className="grid grid-cols-1 gap-6">
             {filteredReviews.length === 0 ? (
-              <div className="bg-white rounded-lg shadow-md p-12 text-center">
-                <Eye className="mx-auto h-16 w-16 text-gray-400 mb-4" />
-                <p className="text-gray-600 text-lg">No reviews found</p>
+              <div className="bg-white rounded-3xl shadow-sm border border-orange-100 p-20 text-center">
+                <div className="bg-orange-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MessageSquare className="text-orange-300" size={40} />
+                </div>
+                <p className="text-gray-500 text-lg font-medium">No reviews found in this category</p>
               </div>
             ) : (
               filteredReviews.map((review) => (
-                <div key={review._id} className="bg-white rounded-lg shadow-md p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          {review.user?.name}
-                        </h3>
-                        <div className="flex items-center gap-1">
-                          {renderStars(review.rating)}
+                <div key={review._id} className="bg-white rounded-2xl shadow-sm border border-orange-100 p-6 hover:shadow-md transition-shadow">
+                  <div className="flex flex-col md:flex-row gap-6">
+                    {/* Item Info Side */}
+                    <div className="w-full md:w-48 shrink-0">
+                      {review.item?.image ? (
+                        <img
+                          src={review.item.image}
+                          alt={review.item.name}
+                          className="w-full h-32 object-cover rounded-xl border border-orange-50"
+                        />
+                      ) : (
+                        <div className="w-full h-32 bg-gray-50 rounded-xl flex items-center justify-center">
+                          <Package className="text-gray-300" />
                         </div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          review.isApproved
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {review.isApproved ? 'Approved' : 'Pending'}
-                        </span>
+                      )}
+                      <p className="mt-3 text-sm font-bold text-gray-900 line-clamp-2">{review.item?.name}</p>
+                    </div>
+
+                    {/* Content Side */}
+                    <div className="flex-1">
+                      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+                        <div>
+                          <div className="flex items-center gap-3 mb-1">
+                            <h3 className="text-lg font-bold text-gray-900">{review.user?.name}</h3>
+                            <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${
+                              review.isApproved
+                                ? 'bg-green-50 text-green-700 border-green-100'
+                                : 'bg-yellow-50 text-yellow-700 border-yellow-100'
+                            }`}>
+                              {review.isApproved ? 'Approved' : 'Pending Approval'}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-4">
+                             <div className="flex items-center gap-0.5">
+                                {renderStars(review.rating)}
+                             </div>
+                             <span className="text-xs text-gray-400 font-medium">
+                               {new Date(review.createdAt).toLocaleDateString()}
+                             </span>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-2">
+                          {!review.isApproved ? (
+                            <button
+                              onClick={() => handleApproval(review._id, true)}
+                              className="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-500 hover:text-white transition-all shadow-sm border border-green-100"
+                              title="Approve"
+                            >
+                              <CheckCircle size={20} />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleApproval(review._id, false)}
+                              className="p-2 bg-yellow-50 text-yellow-600 rounded-xl hover:bg-yellow-500 hover:text-white transition-all shadow-sm border border-yellow-100"
+                              title="Unapprove"
+                            >
+                              <XCircle size={20} />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDelete(review._id)}
+                            className="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-sm border border-red-100"
+                            title="Delete"
+                          >
+                            <Trash2 size={20} />
+                          </button>
+                        </div>
                       </div>
-                      <p className="text-sm text-gray-600 mb-1">
-                        {review.user?.email}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {new Date(review.createdAt).toLocaleDateString()} at{' '}
-                        {new Date(review.createdAt).toLocaleTimeString()}
+
+                      <div className="relative">
+                        <p className="text-gray-700 bg-[#FFF7ED]/50 p-4 rounded-xl border border-orange-50 italic">
+                          "{review.comment}"
+                        </p>
+                      </div>
+                      <p className="mt-2 text-[11px] text-gray-400 font-medium px-1">
+                        User ID: {review.user?.email || 'N/A'}
                       </p>
                     </div>
-                  </div>
-
-                  <div className="mb-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-sm font-medium text-gray-600">Item:</span>
-                      <span className="text-sm font-semibold text-gray-900">
-                        {review.item?.name}
-                      </span>
-                    </div>
-                    {review.item?.image && (
-                      <img
-                        src={review.item.image}
-                        alt={review.item.name}
-                        className="w-20 h-20 object-cover rounded-lg mb-3"
-                      />
-                    )}
-                    <p className="text-gray-700 bg-gray-50 p-4 rounded-lg">
-                      {review.comment}
-                    </p>
-                  </div>
-
-                  <div className="flex gap-3">
-                    {!review.isApproved && (
-                      <button
-                        onClick={() => handleApproval(review._id, true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium"
-                      >
-                        <CheckCircle size={18} />
-                        Approve
-                      </button>
-                    )}
-                    {review.isApproved && (
-                      <button
-                        onClick={() => handleApproval(review._id, false)}
-                        className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors font-medium"
-                      >
-                        <XCircle size={18} />
-                        Unapprove
-                      </button>
-                    )}
-                    <button
-                      onClick={() => handleDelete(review._id)}
-                      className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium"
-                    >
-                      <Trash2 size={18} />
-                      Delete
-                    </button>
                   </div>
                 </div>
               ))

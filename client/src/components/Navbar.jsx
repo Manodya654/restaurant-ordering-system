@@ -1,13 +1,15 @@
 import { Link, NavLink } from 'react-router-dom'; 
-import { FaHome, FaBookOpen, FaHistory, FaUser } from "react-icons/fa";
+import { FaHome, FaBookOpen, FaHistory, FaUser, FaSun, FaSpellCheck, FaBusinessTime } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import { useContext } from 'react'; // Added
 import { AuthContext } from '../context/AuthContext'; // Added
 import { useCart } from '../context/CartContext';
 
 export default function Navbar() {
-  const { cartCount } = useCart();
+  const { getCartCount } = useCart();
+  const cartCount = getCartCount(); 
   const { user } = useContext(AuthContext); // Get user data from context
+  
 
   const activeLinkStyle = ({ isActive }) => 
     `cursor-pointer flex items-center gap-2 transition ${
@@ -38,16 +40,24 @@ export default function Navbar() {
           </li>
           
           <li>
-            <NavLink to="/history" className={activeLinkStyle}>
-              <FaHistory className="w-4 h-4"/> 
-              History
+            <NavLink to="/about" className={activeLinkStyle}>
+              <FaSun className="w-4 h-4"/> 
+              About
             </NavLink>
           </li>
+
+          <li>
+            <NavLink to="/reservation" className={activeLinkStyle}>
+              <FaBusinessTime className="w-4 h-4"/> 
+              Reservation
+            </NavLink>
+          </li>
+          
         </ul>
 
         <div className="flex items-center gap-6 min-w-48 justify-end"> 
           
-          <Link to="/checkout" className="relative p-2 flex items-center group cursor-pointer">
+          <Link to="/cart" className="relative p-2 flex items-center group cursor-pointer">
             <FaCartShopping className="w-5 h-5 text-gray-700 hover:text-orange-600 transition" />
             {cartCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-white animate-in zoom-in">

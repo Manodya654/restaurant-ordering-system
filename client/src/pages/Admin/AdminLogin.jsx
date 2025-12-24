@@ -1,48 +1,47 @@
-import { useState, useContext } from "react";
+import { useState, useContext } from "react"; 
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
-import { loginRequest } from "../../services/authService";
+import { AuthContext } from "../../context/AuthContext"; 
 
 const AdminLogin = () => {
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
-
+  const { login } = useContext(AuthContext); // Use the context function
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
- const submitHandler = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    const data = await loginRequest(
-      email.trim().toLowerCase(),
-      password
-    );
+    try {
+      // Use the context login function
+      const data = await login({ 
+        email: email.trim().toLowerCase(), 
+        password 
+      });
 
-    if (data.user.role !== "admin") {
-      alert("Access denied. Admin only.");
-      return;
+      // Verification logic
+      if (data.user.role !== "admin") {
+        alert("Access denied. Admin only.");
+        return;
+      }
+
+      // If the context login doesn't navigate, do it here
+      navigate("/admin/dashboard"); 
+      
+    } catch (err) {
+      alert(err.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
-
-    // ✅ STORE AUTH FIRST
-    login(data.user, data.token);
-
-    // ✅ THEN NAVIGATE
-    navigate("/admin/menu", { replace: true });
-
-  } catch (err) {
-    alert(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-orange-50">
-      <form onSubmit={submitHandler} className="bg-white p-8 rounded-xl shadow-lg w-96">
+      <form
+        onSubmit={submitHandler}
+        className="bg-white p-8 rounded-xl shadow-lg w-96"
+      >
         <h2 className="text-2xl font-bold text-center mb-6 text-orange-600">
           Admin Login
         </h2>
@@ -68,7 +67,7 @@ const AdminLogin = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold"
+          className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition"
         >
           {loading ? "Signing in..." : "Login"}
         </button>

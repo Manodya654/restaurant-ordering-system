@@ -3,57 +3,75 @@ import { Lock, Mail, User, Phone } from "lucide-react";
 import { useState, useContext } from "react"; 
 import Navbar from "../components/Navbar"; 
 import Footer from "../components/Footer";
-import { AuthContext } from "../context/AuthContext"; 
 
 export default function Register() {
-
-    const { register } = useContext(AuthContext);
-    const navigate = useNavigate();
-
+    
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [phoneNumber, setPhoneNumber] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState(""); 
     const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState(""); 
-    const [message, setMessage] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [message, setMessage] = useState(''); 
     const [isLoading, setIsLoading] = useState(false);
-
-const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage('');
-
-    if (password !== confirmPassword) {
-        setMessage("❌ Passwords do not match.");
-        return;
-    }
     
-    setIsLoading(true);
+    const navigate = useNavigate();
 
-    try {
-        // Change 'phoneNumber' to 'phone' to match backend expectations
-        const result = await register({
+    
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setMessage('');
+
+        if (!name || !email || !phoneNumber || !password || !confirmPassword) {
+            setMessage("Please fill in all required fields.");
+            return;
+        }
+        
+        if (password !== confirmPassword) {
+            setMessage("Passwords do not match.");
+            return;
+        }
+        
+        setIsLoading(true);
+
+        const registerData = {
             name,
             email,
-            phoneNumber, // Use the state variable, but send it as 'phone'
+            phoneNumber,
             password,
-            confirmPassword
-        });
+            confirmPassword,
+        };
 
-        if (result.token) { 
-            setMessage("✅ Registration successful! Redirecting...");
-            setTimeout(() => {
-                navigate('/login'); 
-            }, 2000); 
-        } else {
-            setMessage(`❌ ${result.message || 'Registration failed.'}`);
+        try {
+            
+            // API Call to the backend 
+            const response = await fetch('http://localhost:5000/api/users/register', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(registerData), 
+            });
+
+            const data = await response.json();
+            
+            if (response.ok) { 
+                setMessage(" Registration successful! You can now log in.");
+                
+                setTimeout(() => {
+                    navigate('/login'); 
+                }, 2000); 
+
+            } else {
+                
+                setMessage(`Registration failed: ${data.message || 'An error occurred during sign up.'}`);
+            }
+        } catch (error) {
+            console.error('Network Error:', error);
+            setMessage(" Network error: Could not connect to the server (Is the backend running?).");
+        } finally {
+            setIsLoading(false);
         }
-    } catch (error) {
-        console.error('Network Error:', error);
-        setMessage("❌ Could not connect to the server.");
-    } finally {
-        setIsLoading(false);
-    }
-};
+    };
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -149,14 +167,13 @@ const handleSubmit = async (e) => {
                             />
                             <input
                                 type="password"
-                                placeholder="Confirm your password"
+                                placeholder="Re-enter your password"
                                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition duration-150"
                                 value={confirmPassword} 
                                 onChange={(e) => setConfirmPassword(e.target.value)} 
                                 required
                             />
                         </div>
-
 
                         <button
                             type="submit"
