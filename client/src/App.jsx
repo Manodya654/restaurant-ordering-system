@@ -6,13 +6,12 @@ import Menu from "./pages/Menu";
 import Home from "./pages/Home";
 import Order from "./pages/Orders.jsx";
 import Checkout from "./pages/Checkout.jsx";
-import AtCounter from "./pages/AtCounter.jsx";
 import Profile from "./pages/Profile.jsx";
 
 import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminMenu from "./pages/Admin/AdminMenu";
 import AdminCategories from "./pages/Admin/AdminCategories";
-import AdminOrders from "./pages/Admin/AdminOrders.jsx";
+import AdminOrders from "./pages/Admin/AdminOrders";
 
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute.jsx";
 import { Toaster } from 'react-hot-toast';
@@ -29,7 +28,6 @@ function App() {
         <Route path="/menu" element={<Menu />} />
         <Route path="/orders" element={<Order />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/atcounter" element={<AtCounter />} />
         <Route path="/profile" element={<Profile />} />
 
         {/* Admin */}

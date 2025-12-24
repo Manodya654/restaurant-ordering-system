@@ -1,198 +1,393 @@
-import React, { useState } from "react";
-import { useCart } from "../context/CartContext";
-import Navbar from "../components/Navbar";
-import { FaShoppingBag, FaCreditCard, FaStore, FaChevronRight, FaTrash, FaArrowLeft, FaQuestionCircle } from "react-icons/fa";
-import { useNavigate, Link } from "react-router-dom";
-import toast from "react-hot-toast";
+import { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { CartContext } from '../context/CartContext';
+import { AuthContext } from '../context/AuthContext';
+import Navbar from '../components/Navbar';
 
-export default function Checkout() {
-    const { cartItems, clearCart, removeFromCart } = useCart(); 
-    const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
-    const [showConfirm, setShowConfirm] = useState(false); // Modal State
+import Footer from '../components/Footer';
+import { CreditCard, MapPin } from 'lucide-react';
+
+const Checkout = () => {
+  const { cartItems, getCartTotal, clearCart } = useContext(CartContext);
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
     
-    const [orderData, setOrderData] = useState({
-        paymentMethod: null, 
-        specialInstructions: "",
+    if (!token || !storedUser) {
+      navigate('/login');
+    }
+  }, [navigate]);
+
+  const [formData, setFormData] = useState({
+    fullName: '',
+    phone: '',
+    paymentMethod: 'cash',
+    cardNumber: '',
+    cardExpiry: '',
+    cardCVV: '',
+    specialInstructions: '',
+  });
+
+  // Auto-fill user data when component mounts
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setFormData(prev => ({
+        ...prev,
+        fullName: parsedUser.name || '',
+      }));
+    }
+  }, []);
+
+  const [loading, setLoading] = useState(false);
+  const [showPayPal, setShowPayPal] = useState(false);
+
+  useEffect(() => {
+    if (formData.paymentMethod === 'paypal' && window.paypal && !showPayPal) {
+      setShowPayPal(true);
+      renderPayPalButton();
+    }
+  }, [formData.paymentMethod, showPayPal]);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const createOrder = async (paymentId = null) => {
+    const orderData = {
+      items: cartItems.map(item => ({
+        item: item._id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image: item.image
+      })),
+      totalAmount: getCartTotal(),
+      customerInfo: {
+        fullName: formData.fullName,
+        phone: formData.phone,
+      },
+      paymentMethod: formData.paymentMethod,
+      paymentId: paymentId,
+      specialInstructions: formData.specialInstructions,
+    };
+
+    const token = localStorage.getItem('token');
+    const response = await fetch('http://localhost:5000/api/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(orderData),
     });
 
-    const totalPrice = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-
-const handlePlaceOrder = async () => {
-    try {
-        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-
-        if (!userInfo || !userInfo.token) {
-            toast.error("Please login again");
-            navigate("/login");
-            return;
-        }
-
-        const orderData = {
-            items: cartItems.map(item => ({
-                menuItem: item._id,
-                name: item.name,
-                quantity: item.quantity,
-                price: item.price,
-                subtotal: item.price * item.quantity
-            })),
-            paymentMethod: "At Counter",
-            specialInstructions: orderData.specialInstructions
-        };
-
-        const response = await fetch("http://localhost:5000/api/orders", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${userInfo.token}`
-            },
-            body: JSON.stringify(orderData)
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Order failed");
-        }
-
-        toast.success(`Order placed! Pickup Code: ${data.pickupCode}`);
-        clearCart();
-        navigate("/profile/orders");
-
-    } catch (error) {
-        toast.error(error.message);
-        console.error(error);
+    if (response.ok) {
+      const order = await response.json();
+      clearCart();
+      navigate(`/order-status/${order._id}`);
+    } else {
+      const errorData = await response.json();
+      console.error('Order creation failed:', errorData);
+      throw new Error(errorData.message || 'Failed to create order');
     }
+  };
+
+  const renderPayPalButton = () => {
+    const paypalContainer = document.getElementById('paypal-button-container');
+    if (!paypalContainer || paypalContainer.innerHTML) return;
+
+    window.paypal.Buttons({
+      createOrder: (data, actions) => {
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              value: (getCartTotal() / 350).toFixed(2)
+            }
+          }]
+        });
+      },
+      onApprove: async (data, actions) => {
+        setLoading(true);
+        try {
+          const details = await actions.order.capture();
+          await createOrder(details.id);
+        } catch (error) {
+          alert('Payment failed. Please try again.');
+          setLoading(false);
+        }
+      },
+      onError: (err) => {
+        console.error('PayPal Error:', err);
+        alert('Payment error. Please try again.');
+      }
+    }).render('#paypal-button-container');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    if (formData.paymentMethod === 'paypal') {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await createOrder();
+    } catch (error) {
+      console.error('Error placing order:', error);
+      alert('Error placing order. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (cartItems.length === 0) {
+    navigate('/cart');
+    return null;
+  }
+
+  return (
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-8">Checkout</h1>
+
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Checkout Form */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Pickup Information */}
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="flex items-center gap-2 mb-6">
+                  <MapPin className="text-orange-500" size={24} />
+                  <h2 className="text-2xl font-bold text-gray-900">Pickup Information</h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Method */}
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="flex items-center gap-2 mb-6">
+                  <CreditCard className="text-orange-500" size={24} />
+                  <h2 className="text-2xl font-bold text-gray-900">Payment Method</h2>
+                </div>
+
+                <div className="space-y-4">
+                  <label className="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="cash"
+                      checked={formData.paymentMethod === 'cash'}
+                      onChange={handleChange}
+                      className="mr-3"
+                    />
+                    <span className="font-medium">Cash on Pickup</span>
+                  </label>
+
+                  <label className="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="card"
+                      checked={formData.paymentMethod === 'card'}
+                      onChange={handleChange}
+                      className="mr-3"
+                    />
+                    <span className="font-medium">Credit/Debit Card</span>
+                  </label>
+
+                  <label className="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="paypal"
+                      checked={formData.paymentMethod === 'paypal'}
+                      onChange={handleChange}
+                      className="mr-3"
+                    />
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">PayPal</span>
+                      <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" alt="PayPal" className="h-6" />
+                    </div>
+                  </label>
+
+                  {formData.paymentMethod === 'card' && (
+                    <div className="pl-8 space-y-4 mt-4">
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Card Number
+                        </label>
+                        <input
+                          type="text"
+                          name="cardNumber"
+                          value={formData.cardNumber}
+                          onChange={handleChange}
+                          placeholder="1234 5678 9012 3456"
+                          required={formData.paymentMethod === 'card'}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-gray-700 font-medium mb-2">
+                            Expiry Date
+                          </label>
+                          <input
+                            type="text"
+                            name="cardExpiry"
+                            value={formData.cardExpiry}
+                            onChange={handleChange}
+                            placeholder="MM/YY"
+                            required={formData.paymentMethod === 'card'}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-gray-700 font-medium mb-2">
+                            CVV
+                          </label>
+                          <input
+                            type="text"
+                            name="cardCVV"
+                            value={formData.cardCVV}
+                            onChange={handleChange}
+                            placeholder="123"
+                            required={formData.paymentMethod === 'card'}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {formData.paymentMethod === 'paypal' && (
+                    <div className="pl-8 mt-4">
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-sm text-gray-600 mb-4">
+                          Click the PayPal button below to complete your payment securely.
+                        </p>
+                        <div id="paypal-button-container"></div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Special Instructions */}
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Special Instructions</h2>
+                <textarea
+                  name="specialInstructions"
+                  value={formData.specialInstructions}
+                  onChange={handleChange}
+                  rows="4"
+                  placeholder="Any special requests or dietary requirements..."
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Order Summary */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Order Summary</h2>
+
+                <div className="space-y-4 mb-6">
+                  {cartItems.map((item) => (
+                    <div key={item._id} className="flex justify-between text-sm">
+                      <span className="text-gray-600">
+                        {item.name} x {item.quantity}
+                      </span>
+                      <span className="text-gray-900 font-medium">
+                        LKR {(item.price * item.quantity).toLocaleString()}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border-t pt-4 space-y-3">
+                  <div className="flex justify-between text-gray-600">
+                    <span>Subtotal</span>
+                    <span>LKR {getCartTotal().toLocaleString()}</span>
+                  </div>
+                  <div className="border-t pt-3 mt-3">
+                    <div className="flex justify-between text-xl font-bold text-gray-900">
+                      <span>Total</span>
+                      <span>LKR {getCartTotal().toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {formData.paymentMethod !== 'paypal' && (
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full mt-6 bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition-colors font-semibold text-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  >
+                    {loading ? 'Placing Order...' : 'Place Order'}
+                  </button>
+                )}
+
+                {formData.paymentMethod === 'paypal' && (
+                  <div className="mt-6 text-center text-sm text-gray-600">
+                    Complete payment with PayPal above to place your order
+                  </div>
+                )}
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <Footer />
+    </>
+  );
 };
 
-
-    return (
-        <div className="bg-gray-50 min-h-screen pb-20">
-            <Navbar />
-            
-            {/* CONFIRMATION MODAL */}
-            {showConfirm && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-                    <div className="bg-white rounded-[2rem] p-8 max-w-sm w-full shadow-2xl animate-in fade-in zoom-in duration-200">
-                        <div className="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <FaQuestionCircle className="text-orange-500 text-3xl" />
-                        </div>
-                        <h3 className="text-xl font-bold text-center text-gray-800">Confirm Order?</h3>
-                        <p className="text-gray-500 text-center mt-2">Are you sure you want to place this pickup order for <span className="font-bold text-gray-800">LKR {totalPrice}</span>?</p>
-                        
-                        <div className="grid grid-cols-2 gap-3 mt-8">
-                            <button 
-                                onClick={() => setShowConfirm(false)}
-                                className="py-3 rounded-xl font-bold text-gray-500 hover:bg-gray-100 transition"
-                            >
-                                Cancel
-                            </button>
-                            <button 
-                                onClick={handlePlaceOrder}
-                                className="py-3 rounded-xl font-bold bg-orange-500 text-white hover:bg-orange-600 transition shadow-lg shadow-orange-200"
-                            >
-                                Yes, Place it!
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            <main className="max-w-5xl mx-auto px-6 pt-32">
-                {cartItems.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-20 bg-white rounded-[2rem] shadow-sm border border-gray-100">
-                        <div className="bg-orange-100 p-6 rounded-full mb-6">
-                            <FaShoppingBag className="text-orange-500 text-5xl" />
-                        </div>
-                        <h2 className="text-2xl font-bold text-gray-800">Your cart is empty</h2>
-                        <Link to="/menu" className="mt-8 flex items-center gap-2 bg-orange-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-orange-600 transition">
-                            <FaArrowLeft /> Back to Menu
-                        </Link>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div className="lg:col-span-2 space-y-6">
-                            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
-                                <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                                    <FaShoppingBag className="text-orange-500" /> Review Your Order
-                                </h2>
-                                <div className="space-y-4">
-                                    {cartItems.map((item) => (
-                                        <div key={item._id} className="flex items-center justify-between pb-4 border-b border-gray-50">
-                                            <div className="flex items-center gap-4">
-                                                <img src={item.image} className="w-16 h-16 rounded-2xl object-cover" alt={item.name} />
-                                                <div>
-                                                    <h4 className="font-bold text-gray-800">{item.name}</h4>
-                                                    <p className="text-sm text-gray-400">Qty: {item.quantity}</p>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-6">
-                                                <p className="font-bold text-gray-700">LKR {(item.price * item.quantity).toLocaleString()}</p>
-                                                <button onClick={() => removeFromCart(item._id)} className="text-gray-300 hover:text-red-500 transition-colors p-2"><FaTrash size={14} /></button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className="mt-8">
-                                    <label className="block text-sm font-bold text-gray-700 mb-2">Special Instructions</label>
-                                    <textarea 
-                                        placeholder="Add a note..."
-                                        className="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500 outline-none h-24"
-                                        onChange={(e) => setOrderData({...orderData, specialInstructions: e.target.value})}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="space-y-6">
-                            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
-                                <h2 className="text-xl font-bold mb-6">Payment Method</h2>
-                                <div className="space-y-3">
-                                    <button 
-                                        onClick={() => setOrderData({...orderData, paymentMethod: "At Counter"})}
-                                        className={`w-full p-4 rounded-2xl flex items-center gap-4 border-2 transition ${orderData.paymentMethod === "At Counter" ? 'border-orange-500 bg-orange-50' : 'border-gray-100'}`}
-                                    >
-                                        <FaStore className={orderData.paymentMethod === "At Counter" ? 'text-orange-500' : 'text-gray-400'} />
-                                        <div className="text-left">
-                                            <p className="font-bold text-sm text-gray-800">Pay at Counter</p>
-                                            <p className="text-[10px] text-gray-400 uppercase">Cash or Card on Pickup</p>
-                                        </div>
-                                    </button>
-                                    
-                                    {/* <button 
-                                        onClick={() => setOrderData({...orderData, paymentMethod: "Online"})}
-                                        className={`w-full p-4 rounded-2xl flex items-center gap-4 border-2 transition ${orderData.paymentMethod === "Online" ? 'border-orange-500 bg-orange-50/50' : 'border-gray-100 hover:bg-gray-50'}`}
-                                    >
-                                        <FaCreditCard className={orderData.paymentMethod === "Online" ? 'text-orange-500' : 'text-gray-400'} />
-                                        <div className="text-left">
-                                            <p className="font-bold text-sm text-gray-800">Online Payment</p>
-                                            <p className="text-[10px] text-gray-400 uppercase tracking-tighter">Credit / Debit Card</p>
-                                        </div>
-                                    </button> */}
-                                </div>
-
-                                <div className="mt-8 pt-6 border-t border-gray-100 space-y-2">
-                                    <div className="flex justify-between text-xl font-black text-gray-800 pt-2">
-                                        <span>Total</span>
-                                        <span className="text-orange-600">LKR {totalPrice.toLocaleString()}</span>
-                                    </div>
-                                </div>
-
-                                <button 
-                                    disabled={loading || !orderData.paymentMethod}
-                                    onClick={() => setShowConfirm(true)} // Trigger modal
-                                    className={`w-full mt-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition shadow-lg ${
-                                        orderData.paymentMethod ? 'bg-orange-500 text-white hover:bg-orange-600' : 'bg-gray-200 text-gray-400'
-                                    }`}
-                                >
-                                    {loading ? "Processing..." : "Place Pickup Order"} 
-                                    {!loading && <FaChevronRight size={12}/>}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </main>
-        </div>
-    );
-}
+export default Checkout;

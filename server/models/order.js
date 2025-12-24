@@ -1,61 +1,76 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const OrderSchema = new mongoose.Schema({
+const orderSchema = new mongoose.Schema(
+  {
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-
-    pickupCode: {
+    items: [
+      {
+        item: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Item",
+        },
+        name: {
+          type: String,
+          required: true,
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+          default: 1,
+        },
+        image: {
+          type: String,
+        },
+      },
+    ],
+    customerInfo: {
+      fullName: {
         type: String,
         required: true,
-        unique: true,
-        default: () => Math.random().toString(36).substring(2, 6).toUpperCase()
-    },
-
-    items: [
-        {
-            menuItem: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Menu',
-                required: true
-            },
-            name: { type: String, required: true },
-            quantity: { type: Number, required: true, min: 1 },
-            price: { type: Number, required: true },
-            subtotal: { type: Number, required: true },
-        }
-    ],
-
-    status: {
+      },
+      phone: {
         type: String,
-        enum: ['Pending', 'Confirmed', 'Preparing', 'Ready for Pickup', 'Completed', 'Cancelled'],
-        default: 'Pending'
-    },
-    paymentStatus: {
-        type: String,
-        enum: ['Unpaid', 'Paid'],
-        default: 'Unpaid'
+        required: true,
+      },
     },
     paymentMethod: {
-        type: String,
-        enum: ['Online', 'At Counter'],
-        required: true
+      type: String,
+      required: true,
+      enum: ["cash", "card"],
+      default: "cash",
     },
-    
-    // Allows customer to schedule a pickup or choose "As soon as possible"
-    scheduledPickupTime: {
-        type: Date,
-        default: Date.now
+    totalAmount: {
+      type: Number,
+      required: true,
     },
-
+    status: {
+      type: String,
+      enum: [
+        "pending",
+        "confirmed",
+        "preparing",
+        "ready",
+        "completed",
+        "cancelled",
+      ],
+      default: "pending",
+    },
     specialInstructions: {
-        type: String,
-        trim: true
-    }
-}, { 
-    timestamps: true 
-});
+      type: String,
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
 
-export default mongoose.model('Order', OrderSchema);
+const Order = mongoose.model("Order", orderSchema);
+
+export default Order;
